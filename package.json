@@ -34,12 +34,12 @@
     "less": "^2.7.2",
     "litvis-integration-mume": "^0.6.0",
     "mkdirp": "^0.5.1",
+    "node-fetch": "^2.1.2",
     "qiniu": "=7.1.1",
     "request": "^2.81.0",
     "temp": "^0.8.3",
     "to-vfile": "^2.2.0",
     "uslug": "^1.0.4",
-    "xmlhttprequest": "^1.8.0",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
