@@ -483,7 +483,7 @@ export class MarkdownEngine {
 ${utility.configs.mermaidConfig}
 if (window['MERMAID_CONFIG']) {
   window['MERMAID_CONFIG'].startOnLoad = false
-  window['MERMAID_CONFIG'].cloneCssStyles = false 
+  window['MERMAID_CONFIG'].cloneCssStyles = false
 }
 mermaidAPI.initialize(window['MERMAID_CONFIG'] || {})
 
@@ -904,7 +904,7 @@ if (typeof(window['Reveal']) !== 'undefined') {
         )}">
 
         ${this.generateJSAndCssFilesForPreview(JSAndCssFiles)}
-        ${head}        
+        ${head}
       </head>
       <body class="preview-container">
         <div class="mume markdown-preview" for="preview" ${
@@ -1022,7 +1022,7 @@ if (typeof(window['Reveal']) !== 'undefined') {
 ${mermaidConfig}
 if (window['MERMAID_CONFIG']) {
   window['MERMAID_CONFIG'].startOnLoad = false
-  window['MERMAID_CONFIG'].cloneCssStyles = false 
+  window['MERMAID_CONFIG'].cloneCssStyles = false
 }
 mermaidAPI.initialize(window['MERMAID_CONFIG'] || {})
 
@@ -1089,9 +1089,10 @@ if (typeof(window['Reveal']) !== 'undefined') {
           `./dependencies/vega-embed/vega-embed.js`,
         )}" charset="UTF-8"></script>`;
       } else {
-        vegaScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vega/4.1.0/vega.min.js"></script>`;
-        vegaScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vega-lite/2.6.0/vega-lite.min.js"></script>`;
-        vegaScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vega-embed/3.18.1/vega-embed.min.js"></script>`;
+        vegaScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vega/4.2.0/vega.min.js"></script>`;
+        // vegaScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vega-lite/2.6.0/vega-lite.min.js"></script>`;
+        vegaScript += `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc3/build/vega-lite.min.js"></script>`;
+        vegaScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vega-embed/3.18.2/vega-embed.min.js"></script>`;
       }
       vegaInitScript += `<script>
       var vegaEls = document.querySelectorAll('.vega, .vega-lite');
@@ -1439,7 +1440,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       ${mermaidStyle}
       ${sequenceDiagramStyle}
       ${fontAwesomeStyle}
-      
+
       ${presentationScript}
       ${mermaidScript}
       ${wavedromScript}
@@ -1447,8 +1448,8 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       ${flowchartScript}
       ${sequenceDiagramScript}
 
-      <style> 
-      ${styles} 
+      <style>
+      ${styles}
       </style>
     </head>
     <body ${options.isForPrint ? "" : 'for="html-export"'} ${
@@ -2095,9 +2096,9 @@ sidebarTOCBtn.addEventListener('click', function(event) {
     <title>${title}</title>
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-    <style> 
-    ${styleCSS} 
-    ${globalStyles} 
+    <style>
+    ${styleCSS}
+    ${globalStyles}
     </style>
     ${mathStyle}
   </head>
@@ -2106,7 +2107,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
     ${outputHTML}
     </div>
   </body>
-</html>            
+</html>
 `;
 
     // save as html
