@@ -16,6 +16,16 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
+"@kachkaev/run-elm@^3.0.0-litvis-patch.2":
+  version "3.0.0-litvis-patch.2"
+  resolved "https://registry.yarnpkg.com/@kachkaev/run-elm/-/run-elm-3.0.0-litvis-patch.2.tgz#160ae32f55b1bcb6ee756899be8821902e011912"
+  dependencies:
+    babel-polyfill "^6.26.0"
+    commander "^2.18.0"
+    fs-extra "^7.0.0"
+    node-elm-compiler "^5.0.1"
+    shelljs "^0.8.2"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -298,7 +308,7 @@ async@^1.4.0:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.1.4:
+async@^2.1.4, async@^2.5.0:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/async/-/async-2.6.1.tgz#b245a23ca71930044ec53fa46aa00a3e87c6a610"
   dependencies:
@@ -533,11 +543,23 @@ block-attributes@^0.2.0, block-attributes@^0.2.3:
   dependencies:
     lodash.snakecase "^4.1.1"
 
-block-info@^0.2.0, block-info@^0.2.3:
+block-attributes@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/block-attributes/-/block-attributes-0.2.4.tgz#85db3166a3df9a251763e94811744382709b3ae8"
+  dependencies:
+    lodash.snakecase "^4.1.1"
+
+block-info@^0.2.0:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/block-info/-/block-info-0.2.3.tgz#7e354178656c4d81ad3a30359dc617ddedfa8f9e"
   dependencies:
     block-attributes "^0.2.3"
+
+block-info@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/block-info/-/block-info-0.2.4.tgz#ee39307339ebbbf01f89fb9b3a7b2d16d444340a"
+  dependencies:
+    block-attributes "^0.2.4"
 
 boolbase@~1.0.0:
   version "1.0.0"
@@ -772,9 +794,17 @@ combined-stream@1.0.6, combined-stream@^1.0.5, combined-stream@~1.0.5:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^2.12.1, commander@^2.13.0:
+commander@^2.12.1:
   version "2.15.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.15.1.tgz#df46e867d0fc2aec66a34662b406a9ccafff5b0f"
+
+commander@^2.18.0:
+  version "2.18.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.18.0.tgz#2bf063ddee7c7891176981a2cc798e5754bc6970"
+
+commander@~2.17.1:
+  version "2.17.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
 
 compare-versions@^3.1.0:
   version "3.3.0"
@@ -891,12 +921,12 @@ data-urls@^1.0.0:
     whatwg-mimetype "^2.0.0"
     whatwg-url "^6.4.0"
 
-data-with-position@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/data-with-position/-/data-with-position-0.3.1.tgz#73e0956e8110e5574478cb013f77bcf9bcd8f573"
+data-with-position@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/data-with-position/-/data-with-position-0.3.2.tgz#a682f060d9094f2e03194a23de681ed3b433ac1f"
   dependencies:
     lodash.isnull "^3.0.0"
-    yaml-ast-parser "^0.0.40"
+    yaml-ast-parser "^0.0.41"
 
 debug@^2.1.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
@@ -1061,11 +1091,17 @@ ee-first@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
-elm-string-representation@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/elm-string-representation/-/elm-string-representation-1.1.3.tgz#28d02a721babf9e5db7eac5b7f4251cbed5dd108"
+elm-string-representation@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/elm-string-representation/-/elm-string-representation-1.1.4.tgz#9bfc2e64510e4786746e84bdf5fdcf1e79743e62"
   dependencies:
     lru-cache "^4.1.2"
+
+end-of-stream@^1.1.0:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/end-of-stream/-/end-of-stream-1.4.1.tgz#ed29634d19baba463b6ce6b80a37213eab71ec43"
+  dependencies:
+    once "^1.4.0"
 
 entities@1.0, entities@~1.0.0:
   version "1.0.0"
@@ -1142,18 +1178,6 @@ exec-sh@^0.2.0:
   dependencies:
     merge "^1.1.3"
 
-execa@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/execa/-/execa-0.10.0.tgz#ff456a8f53f90f8eccc71a96d11bdfc7f082cb50"
-  dependencies:
-    cross-spawn "^6.0.0"
-    get-stream "^3.0.0"
-    is-stream "^1.1.0"
-    npm-run-path "^2.0.0"
-    p-finally "^1.0.0"
-    signal-exit "^3.0.0"
-    strip-eof "^1.0.0"
-
 execa@^0.6.0:
   version "0.6.3"
   resolved "https://registry.yarnpkg.com/execa/-/execa-0.6.3.tgz#57b69a594f081759c69e5370f0d17b9cb11658fe"
@@ -1172,6 +1196,18 @@ execa@^0.7.0:
   dependencies:
     cross-spawn "^5.0.1"
     get-stream "^3.0.0"
+    is-stream "^1.1.0"
+    npm-run-path "^2.0.0"
+    p-finally "^1.0.0"
+    signal-exit "^3.0.0"
+    strip-eof "^1.0.0"
+
+execa@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/execa/-/execa-1.0.0.tgz#c6236a5bb4df6d6f15e88e7f017798216749ddd8"
+  dependencies:
+    cross-spawn "^6.0.0"
+    get-stream "^4.0.0"
     is-stream "^1.1.0"
     npm-run-path "^2.0.0"
     p-finally "^1.0.0"
@@ -1326,12 +1362,12 @@ fill-range@^4.0.0:
     repeat-string "^1.6.1"
     to-regex-range "^2.1.0"
 
-find-elm-dependencies@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/find-elm-dependencies/-/find-elm-dependencies-1.0.2.tgz#737adc0ce34dfde0c3bf85f568658555329e4953"
+find-elm-dependencies@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/find-elm-dependencies/-/find-elm-dependencies-2.0.0.tgz#435aa05a6544a0ecf54c5d1ac85cc1ca1044e4e4"
   dependencies:
     firstline "1.2.0"
-    lodash "4.14.2"
+    lodash "4.17.10"
 
 find-index@^0.1.1:
   version "0.1.1"
@@ -1422,9 +1458,9 @@ fs-extra@^5.0.0:
     jsonfile "^4.0.0"
     universalify "^0.1.0"
 
-fs-extra@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-6.0.1.tgz#8abc128f7946e310135ddc93b98bddb410e7a34b"
+fs-extra@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-7.0.0.tgz#8cc3f47ce07ef7b3593a11b9fb245f7e34c041d6"
   dependencies:
     graceful-fs "^4.1.2"
     jsonfile "^4.0.0"
@@ -1471,6 +1507,12 @@ get-caller-file@^1.0.1:
 get-stream@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/get-stream/-/get-stream-3.0.0.tgz#8e943d1358dc37555054ecbe2edb05aa174ede14"
+
+get-stream@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/get-stream/-/get-stream-4.0.0.tgz#9e074cb898bd2b9ebabb445a1766d7f43576d977"
+  dependencies:
+    pump "^3.0.0"
 
 get-value@^2.0.3, get-value@^2.0.6:
   version "2.0.6"
@@ -1556,7 +1598,17 @@ growly@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
 
-handlebars@^4.0.11, handlebars@^4.0.3:
+handlebars@^4.0.12:
+  version "4.0.12"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.12.tgz#2c15c8a96d46da5e266700518ba8cb8d919d5bc5"
+  dependencies:
+    async "^2.5.0"
+    optimist "^0.6.1"
+    source-map "^0.6.1"
+  optionalDependencies:
+    uglify-js "^3.1.4"
+
+handlebars@^4.0.3:
   version "4.0.11"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.11.tgz#630a35dfe0294bc281edae6ffc5d329fc7982dcc"
   dependencies:
@@ -1733,9 +1785,9 @@ image-size@~0.5.0:
   version "0.5.5"
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.5.5.tgz#09dfd4ab9d20e29eb1c3e80b8990378df9e3cb9c"
 
-immer@^1.2.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-1.3.1.tgz#3a8c18d9d618c8b7169760a79beec24a1da6a43e"
+immer@^1.6.0:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-1.7.1.tgz#39e46b415c1086557c053d3657e5a348fbf2f971"
 
 import-local@^1.0.0:
   version "1.0.0"
@@ -1813,6 +1865,10 @@ is-binary-path@^1.0.0:
 is-buffer@^1.1.4, is-buffer@^1.1.5:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
+
+is-buffer@^2.0.0:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.3.tgz#4ecf3fcf749cbd1e472689e109ac66261a25e725"
 
 is-builtin-module@^1.0.0:
   version "1.0.0"
@@ -2528,67 +2584,67 @@ linkify-it@^2.0.0:
   dependencies:
     uc.micro "^1.0.1"
 
-literate-elm@^0.6.5:
-  version "0.6.5"
-  resolved "https://registry.yarnpkg.com/literate-elm/-/literate-elm-0.6.5.tgz#116088ea72d042afb76593d938d4cb3512935c0d"
+literate-elm@^0.7.0-alpha.0:
+  version "0.7.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/literate-elm/-/literate-elm-0.7.0-alpha.0.tgz#35839c91a5a091033f39b79276317109a7bdc43f"
   dependencies:
-    elm-string-representation "^1.1.3"
-    execa "^0.10.0"
-    fs-extra "^5.0.0"
+    "@kachkaev/run-elm" "^3.0.0-litvis-patch.2"
+    elm-string-representation "^1.1.4"
+    execa "^1.0.0"
+    fs-extra "^7.0.0"
     globby "^8.0.1"
-    lodash "^4.17.5"
+    lodash "^4.17.11"
     object-hash "^1.3.0"
-    run-elm "^2.3.0"
-    sleep-promise "^6.0.0"
+    sleep-promise "^8.0.1"
 
-litvis-integration-mume@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/litvis-integration-mume/-/litvis-integration-mume-0.6.0.tgz#013569a319af0d3bc49818ed194aa3529493cce9"
+litvis-integration-mume@^0.7.0-alpha.0:
+  version "0.7.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/litvis-integration-mume/-/litvis-integration-mume-0.7.0-alpha.0.tgz#3083c083c88e37c74c5a3217bf5f20c751bb7102"
   dependencies:
     "@types/yamljs" "^0.2.30"
-    block-attributes "^0.2.3"
-    block-info "^0.2.3"
+    block-attributes "^0.2.4"
+    block-info "^0.2.4"
     cheerio "0.15.0"
-    elm-string-representation "^1.1.3"
+    elm-string-representation "^1.1.4"
     html-entities "^1.2.1"
-    litvis "^0.6.0"
-    lodash "^4.17.5"
+    litvis "^0.7.0-alpha.0"
+    lodash "^4.17.11"
     lru-cache "^4.1.2"
-    markdown-it "^8.4.1"
-    narrative-schema "^0.3.0"
-    narrative-schema-common "^0.1.1"
-    narrative-schema-label "^0.3.0"
-    narrative-schema-styling "^0.1.1"
+    markdown-it "^8.4.2"
+    narrative-schema "^0.3.1"
+    narrative-schema-common "^0.1.2"
+    narrative-schema-label "^0.3.1"
+    narrative-schema-styling "^0.1.2"
     object-hash "^1.3.0"
-    to-vfile "^2.2.0"
+    to-vfile "^5.0.1"
     unist-util-select "^1.5.0"
-    vfile "^2.3.0"
+    vfile "^3.0.0"
     yamljs "^0.3.0"
 
-litvis@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/litvis/-/litvis-0.6.0.tgz#3cac45172d41d6ae0464bb921a6645d87e57ed04"
+litvis@^0.7.0-alpha.0:
+  version "0.7.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/litvis/-/litvis-0.7.0-alpha.0.tgz#42e7c80f8d6da3b0b472da6db7492ec14c8c3459"
   dependencies:
     "@types/unist" "^1.0.0"
-    block-attributes "^0.2.3"
-    block-info "^0.2.3"
-    data-with-position "^0.3.1"
-    fs-extra "^5.0.0"
-    immer "^1.2.1"
+    block-attributes "^0.2.4"
+    block-info "^0.2.4"
+    data-with-position "^0.3.2"
+    fs-extra "^7.0.0"
+    immer "^1.6.0"
     is-whitespace-character "^1.0.2"
     kind-of "^6.0.2"
-    literate-elm "^0.6.5"
-    lodash "^4.17.5"
-    narrative-schema "^0.3.0"
-    narrative-schema-label "^0.3.0"
-    remark-frontmatter "^1.2.0"
+    literate-elm "^0.7.0-alpha.0"
+    lodash "^4.17.11"
+    narrative-schema "^0.3.1"
+    narrative-schema-label "^0.3.1"
+    remark-frontmatter "^1.2.1"
     remark-parse "^5.0.0"
     temp-dir "^1.0.0"
-    to-vfile "^2.2.0"
-    unified "^6.1.6"
+    to-vfile "^5.0.1"
+    unified "^7.0.0"
     unist-util-select "^1.5.0"
-    unist-util-visit "^1.3.0"
-    vfile "^2.3.0"
+    unist-util-visit "^1.4.0"
+    vfile "^3.0.0"
 
 load-json-file@^1.0.0:
   version "1.1.0"
@@ -2623,13 +2679,13 @@ lodash.sortby@^4.7.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
 
-lodash@4.14.2:
-  version "4.14.2"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.14.2.tgz#bbccce6373a400fbfd0a8c67ca42f6d1ef416432"
-
-lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5:
+lodash@4.17.10, lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.4:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
+
+lodash@^4.17.11:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
 lodash@~2.4.1:
   version "2.4.2"
@@ -2672,9 +2728,9 @@ markdown-escapes@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/markdown-escapes/-/markdown-escapes-1.0.2.tgz#e639cbde7b99c841c0bacc8a07982873b46d2122"
 
-markdown-it@^8.4.1:
-  version "8.4.1"
-  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-8.4.1.tgz#206fe59b0e4e1b78a7c73250af9b34a4ad0aaf44"
+markdown-it@^8.4.2:
+  version "8.4.2"
+  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-8.4.2.tgz#386f98998dc15a37722aa7722084f4020bdd9b54"
   dependencies:
     argparse "^1.0.7"
     entities "~1.1.1"
@@ -2841,77 +2897,77 @@ nanomatch@^1.2.9:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-narrative-schema-common@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/narrative-schema-common/-/narrative-schema-common-0.1.1.tgz#90237ba97ccf8d1e87191fa108c4f20cc0b52ef3"
-  dependencies:
-    data-with-position "^0.3.1"
-    kind-of "^6.0.2"
-    vfile "^2.3.0"
-
-narrative-schema-label@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/narrative-schema-label/-/narrative-schema-label-0.3.0.tgz#be0bdc9721ccf2ef4d649048aa54d59f2154d9d3"
-  dependencies:
-    block-attributes "^0.2.3"
-    block-info "^0.2.3"
-    cheerio "0.15.0"
-    data-with-position "^0.3.1"
-    handlebars "^4.0.11"
-    html-entities "^1.2.1"
-    lodash "^4.17.5"
-    lru-cache "^4.1.2"
-    narrative-schema-common "^0.1.1"
-    object-hash "^1.3.0"
-    unist-util-visit "^1.3.0"
-    unist-util-visit-parents "^1.1.2"
-    vfile "^2.3.0"
-
-narrative-schema-rule@^0.1.2:
+narrative-schema-common@^0.1.2:
   version "0.1.2"
-  resolved "https://registry.yarnpkg.com/narrative-schema-rule/-/narrative-schema-rule-0.1.2.tgz#4dea4aab498bde0b874a4120c02acb6e9bc7354d"
+  resolved "https://registry.yarnpkg.com/narrative-schema-common/-/narrative-schema-common-0.1.2.tgz#7c6812919ed4f0258151b94f499aec3b58ed6325"
   dependencies:
-    block-attributes "^0.2.3"
-    block-info "^0.2.3"
-    cheerio "0.15.0"
-    data-with-position "^0.3.1"
-    handlebars "^4.0.11"
-    html-entities "^1.2.1"
-    lodash "^4.17.5"
-    narrative-schema-common "^0.1.1"
-    narrative-schema-label "^0.3.0"
-    unist-util-visit "^1.3.0"
-    vfile "^2.3.0"
+    data-with-position "^0.3.2"
+    kind-of "^6.0.2"
+    vfile "^3.0.0"
 
-narrative-schema-styling@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/narrative-schema-styling/-/narrative-schema-styling-0.1.1.tgz#242b137d5547518ec0eee33bc25e23006c051857"
+narrative-schema-label@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/narrative-schema-label/-/narrative-schema-label-0.3.1.tgz#120df3521dc07b9ab73a796110780c52213969b1"
   dependencies:
-    block-attributes "^0.2.3"
-    block-info "^0.2.3"
+    block-attributes "^0.2.4"
+    block-info "^0.2.4"
     cheerio "0.15.0"
-    data-with-position "^0.3.1"
-    handlebars "^4.0.11"
+    data-with-position "^0.3.2"
+    handlebars "^4.0.12"
     html-entities "^1.2.1"
-    lodash "^4.17.5"
-    narrative-schema-common "^0.1.1"
-    unist-util-visit "^1.3.0"
-    vfile "^2.3.0"
+    lodash "^4.17.11"
+    lru-cache "^4.1.2"
+    narrative-schema-common "^0.1.2"
+    object-hash "^1.3.0"
+    unist-util-visit "^1.4.0"
+    unist-util-visit-parents "^2.0.1"
+    vfile "^3.0.0"
 
-narrative-schema@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/narrative-schema/-/narrative-schema-0.3.0.tgz#a92ae198567ab53309925e6d959993e27bc78987"
+narrative-schema-rule@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/narrative-schema-rule/-/narrative-schema-rule-0.1.3.tgz#19d321c3216efe1df61faa6c91cf67c3ec1e1c10"
   dependencies:
-    data-with-position "^0.3.1"
+    block-attributes "^0.2.4"
+    block-info "^0.2.4"
+    cheerio "0.15.0"
+    data-with-position "^0.3.2"
+    handlebars "^4.0.12"
+    html-entities "^1.2.1"
+    lodash "^4.17.11"
+    narrative-schema-common "^0.1.2"
+    narrative-schema-label "^0.3.1"
+    unist-util-visit "^1.4.0"
+    vfile "^3.0.0"
+
+narrative-schema-styling@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/narrative-schema-styling/-/narrative-schema-styling-0.1.2.tgz#72761b0d1255d19d4dad0382d3aaa9d38813f61b"
+  dependencies:
+    block-attributes "^0.2.4"
+    block-info "^0.2.4"
+    cheerio "0.15.0"
+    data-with-position "^0.3.2"
+    handlebars "^4.0.12"
+    html-entities "^1.2.1"
+    lodash "^4.17.11"
+    narrative-schema-common "^0.1.2"
+    unist-util-visit "^1.4.0"
+    vfile "^3.0.0"
+
+narrative-schema@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/narrative-schema/-/narrative-schema-0.3.1.tgz#f84bd542cdedd5a59c97e4e876fd6e84084374c1"
+  dependencies:
+    data-with-position "^0.3.2"
     jsonschema "^1.2.4"
-    lodash "^4.17.5"
-    narrative-schema-common "^0.1.1"
-    narrative-schema-label "^0.3.0"
-    narrative-schema-rule "^0.1.2"
-    narrative-schema-styling "^0.1.1"
+    lodash "^4.17.11"
+    narrative-schema-common "^0.1.2"
+    narrative-schema-label "^0.3.1"
+    narrative-schema-rule "^0.1.3"
+    narrative-schema-styling "^0.1.2"
     pseudo-yaml-ast "^1.0.10"
-    to-vfile "^2.2.0"
-    vfile "^2.3.0"
+    to-vfile "^5.0.1"
+    vfile "^3.0.0"
 
 natural-compare@^1.4.0:
   version "1.4.0"
@@ -2929,13 +2985,13 @@ nice-try@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.4.tgz#d93962f6c52f2c1558c0fbda6d512819f1efe1c4"
 
-node-elm-compiler@^4.3.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/node-elm-compiler/-/node-elm-compiler-4.5.0.tgz#3029f053cfbfc68730e75a54f93495cc58bf7ceb"
+node-elm-compiler@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/node-elm-compiler/-/node-elm-compiler-5.0.1.tgz#d62094ee72d6aad616ebaa71397b6cfac90381f6"
   dependencies:
     cross-spawn "4.0.0"
-    find-elm-dependencies "1.0.2"
-    lodash "4.14.2"
+    find-elm-dependencies "2.0.0"
+    lodash "4.17.10"
     temp "^0.8.3"
 
 node-fetch@^2.1.2:
@@ -3082,7 +3138,7 @@ object.pick@^1.3.0:
   dependencies:
     isobject "^3.0.1"
 
-once@^1.3.0, once@^1.4.0:
+once@^1.3.0, once@^1.3.1, once@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/once/-/once-1.4.0.tgz#583b1aa775961d4b113ac17d9c50baef9dd76bd1"
   dependencies:
@@ -3342,6 +3398,13 @@ psl@^1.1.24:
   version "1.1.28"
   resolved "https://registry.yarnpkg.com/psl/-/psl-1.1.28.tgz#4fb6ceb08a1e2214d4fd4de0ca22dae13740bc7b"
 
+pump@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/pump/-/pump-3.0.0.tgz#b4a2116815bde2f4e1ea602354e8c75565107a64"
+  dependencies:
+    end-of-stream "^1.1.0"
+    once "^1.3.1"
+
 punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
@@ -3465,9 +3528,9 @@ regex-not@^1.0.0, regex-not@^1.0.2:
     extend-shallow "^3.0.2"
     safe-regex "^1.1.0"
 
-remark-frontmatter@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/remark-frontmatter/-/remark-frontmatter-1.2.0.tgz#67905d178c0fe531ed12c57b98759f101fc2c1b5"
+remark-frontmatter@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/remark-frontmatter/-/remark-frontmatter-1.2.1.tgz#6427e8da41d8e78b1b955a0af46ca71350085f50"
   dependencies:
     fault "^1.0.1"
     xtend "^4.0.1"
@@ -3636,16 +3699,6 @@ rsvp@^3.3.3:
   version "3.6.2"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-3.6.2.tgz#2e96491599a96cde1b515d5674a8f7a91452926a"
 
-run-elm@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/run-elm/-/run-elm-2.3.0.tgz#970b335ecaf611899c4e8aa7a3fa65b52a994c00"
-  dependencies:
-    babel-polyfill "^6.26.0"
-    commander "^2.13.0"
-    fs-extra "^6.0.1"
-    node-elm-compiler "^4.3.0"
-    shelljs "^0.7.6"
-
 safe-buffer@^5.0.1, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
@@ -3728,9 +3781,9 @@ shell-quote@^1.6.1:
     array-reduce "~0.0.0"
     jsonify "~0.0.0"
 
-shelljs@^0.7.6:
-  version "0.7.8"
-  resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.7.8.tgz#decbcf874b0d1e5fb72e14b164a9683048e9acb3"
+shelljs@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.8.2.tgz#345b7df7763f4c2340d584abb532c5f752ca9e35"
   dependencies:
     glob "^7.0.0"
     interpret "^1.0.0"
@@ -3748,9 +3801,9 @@ slash@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
 
-sleep-promise@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/sleep-promise/-/sleep-promise-6.0.0.tgz#a80b4c3c26ed553c73c9db7234bc0304f7d42d4a"
+sleep-promise@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/sleep-promise/-/sleep-promise-8.0.1.tgz#8d795a27ea23953df6b52b91081e5e22665993c5"
 
 snapdragon-node@^2.0.1:
   version "2.1.1"
@@ -3822,7 +3875,7 @@ source-map@^0.5.3, source-map@^0.5.6, source-map@^0.5.7, source-map@~0.5.1:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
 
-source-map@^0.6.0, source-map@~0.6.1:
+source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
 
@@ -4071,6 +4124,13 @@ to-vfile@^2.2.0:
     vfile "^2.0.0"
     x-is-function "^1.0.4"
 
+to-vfile@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/to-vfile/-/to-vfile-5.0.1.tgz#c661ba2ec961fa00de1c11464efb475acc00e822"
+  dependencies:
+    is-buffer "^2.0.0"
+    vfile "^3.0.0"
+
 tough-cookie@>=2.3.3, tough-cookie@^2.3.3:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.4.2.tgz#aa9133154518b494efab98a58247bfc38818c00c"
@@ -4186,6 +4246,13 @@ uglify-js@^2.6:
   optionalDependencies:
     uglify-to-browserify "~1.0.0"
 
+uglify-js@^3.1.4:
+  version "3.4.9"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.9.tgz#af02f180c1207d76432e473ed24a28f4a782bae3"
+  dependencies:
+    commander "~2.17.1"
+    source-map "~0.6.1"
+
 uglify-to-browserify@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz#6e0924d6bda6b5afe349e39a6d632850a0f882b7"
@@ -4197,15 +4264,15 @@ unherit@^1.0.4:
     inherits "^2.0.1"
     xtend "^4.0.1"
 
-unified@^6.1.6:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/unified/-/unified-6.2.0.tgz#7fbd630f719126d67d40c644b7e3f617035f6dba"
+unified@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/unified/-/unified-7.0.0.tgz#9c8f4fcee78f8e7e895f0e3d6adb53bd015e1a53"
   dependencies:
     bail "^1.0.0"
     extend "^3.0.0"
     is-plain-obj "^1.1.0"
     trough "^1.0.0"
-    vfile "^2.0.0"
+    vfile "^3.0.0"
     x-is-string "^0.1.0"
 
 union-value@^1.0.0:
@@ -4217,7 +4284,7 @@ union-value@^1.0.0:
     is-extendable "^0.1.1"
     set-value "^0.4.3"
 
-unist-util-is@^2.1.1:
+unist-util-is@^2.1.1, unist-util-is@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/unist-util-is/-/unist-util-is-2.1.2.tgz#1193fa8f2bfbbb82150633f3a8d2eb9a1c1d55db"
 
@@ -4239,15 +4306,23 @@ unist-util-stringify-position@^1.0.0, unist-util-stringify-position@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/unist-util-stringify-position/-/unist-util-stringify-position-1.1.2.tgz#3f37fcf351279dcbca7480ab5889bb8a832ee1c6"
 
-unist-util-visit-parents@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/unist-util-visit-parents/-/unist-util-visit-parents-1.1.2.tgz#f6e3afee8bdbf961c0e6f028ea3c0480028c3d06"
+unist-util-visit-parents@^2.0.0, unist-util-visit-parents@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/unist-util-visit-parents/-/unist-util-visit-parents-2.0.1.tgz#63fffc8929027bee04bfef7d2cce474f71cb6217"
+  dependencies:
+    unist-util-is "^2.1.2"
 
-unist-util-visit@^1.1.0, unist-util-visit@^1.3.0:
+unist-util-visit@^1.1.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/unist-util-visit/-/unist-util-visit-1.3.1.tgz#c019ac9337a62486be58531bc27e7499ae7d55c7"
   dependencies:
     unist-util-is "^2.1.1"
+
+unist-util-visit@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/unist-util-visit/-/unist-util-visit-1.4.0.tgz#1cb763647186dc26f5e1df5db6bd1e48b3cc2fb1"
+  dependencies:
+    unist-util-visit-parents "^2.0.0"
 
 universalify@^0.1.0:
   version "0.1.2"
@@ -4347,11 +4422,20 @@ vfile-message@^1.0.0:
   dependencies:
     unist-util-stringify-position "^1.1.1"
 
-vfile@^2.0.0, vfile@^2.3.0:
+vfile@^2.0.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/vfile/-/vfile-2.3.0.tgz#e62d8e72b20e83c324bc6c67278ee272488bf84a"
   dependencies:
     is-buffer "^1.1.4"
+    replace-ext "1.0.0"
+    unist-util-stringify-position "^1.0.0"
+    vfile-message "^1.0.0"
+
+vfile@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/vfile/-/vfile-3.0.0.tgz#e0995335fdafbefe0c3d59a42868d413c0409031"
+  dependencies:
+    is-buffer "^2.0.0"
     replace-ext "1.0.0"
     unist-util-stringify-position "^1.0.0"
     vfile-message "^1.0.0"
@@ -4493,9 +4577,9 @@ yaml-ast-parser@0.0.36:
   version "0.0.36"
   resolved "https://registry.yarnpkg.com/yaml-ast-parser/-/yaml-ast-parser-0.0.36.tgz#9dfdef461570253392af1941b127b9de699a089b"
 
-yaml-ast-parser@^0.0.40:
-  version "0.0.40"
-  resolved "https://registry.yarnpkg.com/yaml-ast-parser/-/yaml-ast-parser-0.0.40.tgz#08536d4e73d322b1c9ce207ab8dd70e04d20ae6e"
+yaml-ast-parser@^0.0.41:
+  version "0.0.41"
+  resolved "https://registry.yarnpkg.com/yaml-ast-parser/-/yaml-ast-parser-0.0.41.tgz#e120d6933d11c1da091ad824e091eb5e3248cfdb"
 
 yamljs@^0.3.0:
   version "0.3.0"
