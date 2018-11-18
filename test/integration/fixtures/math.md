@@ -6,7 +6,7 @@ hello $inline$ math
 ---
 
 `$$ E = mc^22 $$`
-$$ E = mc^22 $$
+$$E = mc^22$$
 
 ---
 
