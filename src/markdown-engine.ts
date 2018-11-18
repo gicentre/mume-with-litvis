@@ -2840,7 +2840,12 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       this.config.mathRenderingOption,
       this.config.mathBlockDelimiters,
     );
-    await enhanceWithLitvis(processedNarrative, $, this.litvisEnhancerCache);
+    await enhanceWithLitvis(
+      processedNarrative,
+      $,
+      this.litvisEnhancerCache,
+      this.parseMD.bind(this),
+    );
     await enhanceWithFencedDiagrams(
       $,
       this.graphsCache,
