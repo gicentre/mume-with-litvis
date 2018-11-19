@@ -1,6 +1,10 @@
 This changelog is for the fork.
 See [`CHANGELOG-UPSTREAM.md`](CHANGELOG-UPSTREAM.md) of the changelog related to the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.11.0
+
+- Implement markdown output from litvis blocks ([gicentre/litvis#10](https://github.com/gicentre/litvis/pull/10))
+
 ## 0.6.0
 
 - Improve parsing of narrative schemas, support label aliases and fix rules.
