@@ -1,6 +1,11 @@
 This changelog is for the fork.
 See [`CHANGELOG-UPSTREAM.md`](CHANGELOG-UPSTREAM.md) of the changelog related to the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.12.0
+
+- Upgrade litvis-integration-mume (fix a few bugs)
+- Upgrade vega to 4.4.0, vega-lite to 3.0.0-rc10 and vega-embed to 3.26.1
+
 ## 0.11.0
 
 - Implement markdown output from litvis blocks ([gicentre/litvis#10](https://github.com/gicentre/litvis/pull/10))
