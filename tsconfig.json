@@ -3,6 +3,7 @@
     "module": "commonjs",
     "target": "es6",
     "sourceMap": true,
+    "skipLibCheck": true,
     "outDir": "out",
     "lib": ["es2017", "dom"],
     "rootDir": ".",
