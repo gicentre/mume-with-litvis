@@ -1,6 +1,12 @@
 This changelog is for the fork.
 See [`CHANGELOG-UPSTREAM.md`](CHANGELOG-UPSTREAM.md) of the changelog related to the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.14.1
+
+- Fix a number of regressions in Elm output parsing and URL fetching
+- Improve error handling in a couple of edge cases
+- Upgrade vega to 5.3.0
+
 ## 0.14.0
 
 - Upgrade vega to 5.0.0, vega-lite to 3.0.0-rc14 and vega-embed to 4.0.0-rc1s
