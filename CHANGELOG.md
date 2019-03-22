@@ -1,6 +1,10 @@
 This changelog is for the fork.
 See [`CHANGELOG-UPSTREAM.md`](CHANGELOG-UPSTREAM.md) of the changelog related to the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.14.2
+
+- Downgrade vega from 5.3.0 to 5.1.0 to avoid `Error: Cycle detected in dataflow graph`
+
 ## 0.14.1
 
 - Fix a number of regressions in Elm output parsing and URL fetching
