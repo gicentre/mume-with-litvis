@@ -1089,9 +1089,12 @@ if (typeof(window['Reveal']) !== 'undefined') {
           `./dependencies/vega-embed/vega-embed.js`,
         )}" charset="UTF-8"></script>`;
       } else {
-        vegaScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vega/5.1.0/vega.min.js"></script>`;
-        vegaScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vega-lite/3.0.0-rc14/vega-lite.min.js"></script>`;
-        vegaScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vega-embed/4.0.0-rc1/vega-embed.min.js"></script>`;
+        const vegaVersion = "5.3.2";
+        const vegaLiteVersion = "3.0.2";
+        const vegaEmbedVersion = "4.0.0";
+        vegaScript += `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@${vegaVersion}/build/vega.min.js "></script>`;
+        vegaScript += `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@${vegaLiteVersion}/build/vega-lite.min.js"></script>`;
+        vegaScript += `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@${vegaEmbedVersion}/build/vega-embed.min.js"></script>`;
       }
       vegaInitScript += `<script>
       var vegaEls = document.querySelectorAll('.vega, .vega-lite');
