@@ -1294,10 +1294,10 @@ ee-first@~1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
-elm-string-representation@^1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/elm-string-representation/-/elm-string-representation-1.1.6.tgz#c91b316a8c5cdf2d095b8030cafb16b8ad3bcbf8"
-  integrity sha512-NL0MR3LH3pQGygGhiP25C6xoLWVaos+qEovDDY2VcCD4IIWr2E4ElTQte3iKVSmLXuE/fBBgBRM2Eu+Yhav9lQ==
+elm-string-representation@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/elm-string-representation/-/elm-string-representation-1.1.8.tgz#c4372c9a6be5129773dc233a5a568b63476c15b0"
+  integrity sha512-9EYNH099cKu95RDNniWlaz5EWAQBDoolSTvaBezvTyvdLATBOTQ4GZ6NjFkwvAUwwOCVl2UwDrNo+7ltCGjjoQ==
   dependencies:
     lru-cache "^4.1.2"
 
@@ -2983,13 +2983,13 @@ linkify-it@^2.0.0:
   dependencies:
     uc.micro "^1.0.1"
 
-literate-elm@^0.7.2:
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/literate-elm/-/literate-elm-0.7.2.tgz#a71d31a884dcb054b2a4663fae77ec336c34f903"
-  integrity sha512-7Qvv/n1ssx/mALTOqo4GwaaZpBI0WBrtkYE+iM6El4ycWxV7r4BDcmHuchUKLvpo8sse7XMgXbPtQ+aOTartdQ==
+literate-elm@^0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/literate-elm/-/literate-elm-0.7.4.tgz#fa62dc99e4da89dabcd28cddadf5eb47619d1d29"
+  integrity sha512-ngrDTm9mOUhdvxu/ge2kYhjn0fMIIXRgEq3dPPYtzFJN4uHF45nWxd9+bk1hpDFZ2e9wmYtk3eB53ZbkQIZDVA==
   dependencies:
     "@kachkaev/run-elm" "^3.0.0-litvis-patch.3"
-    elm-string-representation "^1.1.6"
+    elm-string-representation "^1.1.8"
     execa "^1.0.0"
     fs-extra "^7.0.0"
     globby "^8.0.1"
@@ -2997,18 +2997,18 @@ literate-elm@^0.7.2:
     object-hash "^1.3.0"
     sleep-promise "^8.0.1"
 
-litvis-integration-mume@^0.8.2:
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/litvis-integration-mume/-/litvis-integration-mume-0.8.2.tgz#49d1a556040023160b3541a27a921f7720dae6b3"
-  integrity sha512-taDf/Y7ATKVxzt8RZ1IoR3fE+K7DbpqNWUeZN0Hr1D9zv+ouUkAQIBDfSw7zabvMIhO/cLJhDZABfGg0ahTiBA==
+litvis-integration-mume@^0.8.4:
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/litvis-integration-mume/-/litvis-integration-mume-0.8.4.tgz#922b379c9bc38605f41e80442dd454a251d8d942"
+  integrity sha512-/wS6oDp/9f6d8+81RjCuJxbXRnmZf+cy2ULOn+KbYrVZxb8AgZMYhEkniN4saYTYWBzUDORbd2s8Hldv82W/gg==
   dependencies:
     "@types/yamljs" "^0.2.30"
     block-attributes "^0.2.5"
     block-info "^0.2.5"
     cheerio "0.15.0"
-    elm-string-representation "^1.1.6"
+    elm-string-representation "^1.1.8"
     html-entities "^1.2.1"
-    litvis "^0.8.2"
+    litvis "^0.8.4"
     lodash "^4.17.11"
     lru-cache "^4.1.2"
     markdown-it "^8.4.2"
@@ -3022,10 +3022,10 @@ litvis-integration-mume@^0.8.2:
     vfile "^3.0.0"
     yamljs "^0.3.0"
 
-litvis@^0.8.2:
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/litvis/-/litvis-0.8.2.tgz#0eb837f6c0bddfdea1876928e35405283be20c99"
-  integrity sha512-PQrjcaG+q/quV7WE5VgXi7rmaygyg7VQIYrIvNP7GRUSH4sLreaU6liLlj8LkRybz9Xic38k7EvWRT+gZ0P52g==
+litvis@^0.8.4:
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/litvis/-/litvis-0.8.4.tgz#6615a28b2a5f939f4f07e369c5c66bf725eb2a01"
+  integrity sha512-MihuvGCWwxiyCm74qK6i3uPbZCEaVkyHllvszWFm3xfEMZvbQqSReUVMOQYRBSBUkjCO5pgZk1zzYo6ghVOokg==
   dependencies:
     "@types/unist" "^1.0.0"
     block-attributes "^0.2.5"
@@ -3035,7 +3035,7 @@ litvis@^0.8.2:
     immer "^1.6.0"
     is-whitespace-character "^1.0.2"
     kind-of "^6.0.2"
-    literate-elm "^0.7.2"
+    literate-elm "^0.7.4"
     lodash "^4.17.11"
     narrative-schema "^0.3.2"
     narrative-schema-label "^0.3.2"
