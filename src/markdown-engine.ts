@@ -1089,8 +1089,8 @@ if (typeof(window['Reveal']) !== 'undefined') {
           `./dependencies/vega-embed/vega-embed.js`,
         )}" charset="UTF-8"></script>`;
       } else {
-        const vegaVersion = "5.3.2";
-        const vegaLiteVersion = "3.0.2";
+        const vegaVersion = "5.3.5";
+        const vegaLiteVersion = "3.2.1";
         const vegaEmbedVersion = "4.0.0";
         vegaScript += `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@${vegaVersion}/build/vega.min.js "></script>`;
         vegaScript += `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@${vegaLiteVersion}/build/vega-lite.min.js"></script>`;

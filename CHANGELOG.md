@@ -1,6 +1,11 @@
 This changelog is for the fork.
 See [`CHANGELOG-UPSTREAM.md`](CHANGELOG-UPSTREAM.md) of the changelog related to the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.14.4
+
+- Upgrade vega to 5.3.5 and vega-lite to 3.2.1
+- \[elm-string-representation] Allow any strings in keys except `" = "`
+
 ## 0.14.3
 
 - Upgrade vega to 5.3.2, vega-lite to 3.0.2 and vega-embed to 4.0.0
