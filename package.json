@@ -33,7 +33,7 @@
     "fs-extra": "^5.0.0",
     "gray-matter": "^3.0.7",
     "less": "^2.7.2",
-    "litvis-integration-mume": "^0.8.5",
+    "litvis-integration-mume": "^0.8.6",
     "mkdirp": "^0.5.1",
     "node-fetch": "^2.1.2",
     "qiniu": "=7.1.1",
