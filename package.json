@@ -25,6 +25,7 @@
   "license": "BSD-3, NCSA",
   "repository": "https://github.com/gicentre/mume-with-litvis",
   "dependencies": {
+    "apache-arrow": "^0.13.0",
     "babyparse": "^0.4.6",
     "block-attributes": "^0.2.0",
     "block-info": "^0.2.0",
@@ -40,7 +41,7 @@
     "temp": "^0.8.3",
     "to-vfile": "^2.2.0",
     "uslug": "^1.0.4",
-    "vega-loader": "^4.0.0",
+    "vega-loader": "^4.1.0",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {

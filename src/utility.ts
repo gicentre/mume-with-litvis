@@ -571,6 +571,17 @@ export async function allowUnsafeEvalAndUnsafeNewFunctionAsync(
   }
 }
 
+export const loadDependency = (dependencyPath) =>
+  allowUnsafeEval(() =>
+    allowUnsafeNewFunction(() =>
+      require(path.resolve(
+        extensionDirectoryPath,
+        "dependencies",
+        dependencyPath,
+      )),
+    ),
+  );
+
 export function Function(...args: string[]) {
   let body = "";
   const paramLists: string[] = [];

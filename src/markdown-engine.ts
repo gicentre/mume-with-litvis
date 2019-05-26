@@ -1075,27 +1075,38 @@ if (typeof(window['Reveal']) !== 'undefined') {
       html.indexOf(' class="vega') >= 0 ||
       html.indexOf(' class="vega-lite') >= 0
     ) {
-      if (options.offline) {
-        vegaScript += `<script type="text/javascript" src="file:///${path.resolve(
-          utility.extensionDirectoryPath,
-          `./dependencies/vega/vega.js`,
-        )}" charset="UTF-8"></script>`;
-        vegaScript += `<script type="text/javascript" src="file:///${path.resolve(
-          utility.extensionDirectoryPath,
-          `./dependencies/vega-lite/vega-lite.js`,
-        )}" charset="UTF-8"></script>`;
-        vegaScript += `<script type="text/javascript" src="file:///${path.resolve(
-          utility.extensionDirectoryPath,
-          `./dependencies/vega-embed/vega-embed.js`,
-        )}" charset="UTF-8"></script>`;
-      } else {
-        const vegaVersion = "5.3.5";
-        const vegaLiteVersion = "3.2.1";
-        const vegaEmbedVersion = "4.0.0";
-        vegaScript += `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@${vegaVersion}/build/vega.min.js "></script>`;
-        vegaScript += `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@${vegaLiteVersion}/build/vega-lite.min.js"></script>`;
-        vegaScript += `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@${vegaEmbedVersion}/build/vega-embed.min.js"></script>`;
-      }
+      const dependencies = [
+        {
+          name: "vega",
+          version: "5.4.0",
+        },
+        {
+          name: "vega-lite",
+          version: "3.2.1",
+        },
+        {
+          name: "vega-embed",
+          version: "4.2.0",
+        },
+        {
+          name: "apache-arrow",
+          version: "0.13.0",
+          buildPath: "Arrow.es5.min.js",
+        },
+        {
+          name: "vega-loader-arrow",
+          version: "0.0.6",
+        },
+      ];
+      dependencies.forEach(({ name, version, buildPath }) => {
+        vegaScript += options.offline
+          ? `<script type="text/javascript" src="file:///${path.resolve(
+              utility.extensionDirectoryPath,
+              `./dependencies/${name}/${name}.min.js`,
+            )}" charset="UTF-8"></script>`
+          : `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/${name}@${version}/${buildPath ||
+              `build/${name}.js`}"></script>`;
+      });
       vegaInitScript += `<script>
       var vegaEls = document.querySelectorAll('.vega, .vega-lite');
       function reportVegaError(el, error) {
