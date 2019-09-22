@@ -1,6 +1,6 @@
 // tslint:disable:ban-types no-var-requires
 import {
-  BlockAttributes,
+  BlockAttributes as Attributes,
   stringify as stringifyAttributes,
 } from "block-attributes";
 import { BlockInfo } from "block-info";
@@ -15,10 +15,7 @@ import { toSVG as vegaToSvg } from "../vega";
 import { toSVG as vegaLiteToSvg } from "../vega-lite";
 import { Viz } from "../viz";
 
-const ensureClassInAttributes = (
-  attributes: BlockAttributes,
-  className: string,
-) => {
+const ensureClassInAttributes = (attributes: Attributes, className: string) => {
   const existingClassNames: string = attributes["class"] || "";
   if (existingClassNames.split(" ").indexOf(className) === -1) {
     return {

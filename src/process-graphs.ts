@@ -1,4 +1,4 @@
-import { parse as parseBlockAttributes } from "block-attributes";
+import { parse as parseAttributes } from "block-attributes";
 import * as cheerio from "cheerio";
 import * as path from "path";
 
@@ -68,7 +68,7 @@ export async function processGraphs(
           const optionsMatch = trimmedLine.match(/\{(.+)\}$/);
           if (optionsMatch) {
             try {
-              options = parseBlockAttributes(optionsMatch[0]);
+              options = parseAttributes(optionsMatch[0]);
               optionsStr = optionsMatch[1];
             } catch (error) {
               options = {};
