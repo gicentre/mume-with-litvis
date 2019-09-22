@@ -889,16 +889,19 @@ export async function transformMarkdown(
               // graphviz
               output = `\`\`\`dot ${stringifyAttributes(
                 config,
+                true,
               )}\n${fileContent}\n\`\`\`  `;
             } else if (extname === ".mermaid") {
               // mermaid
               output = `\`\`\`mermaid ${stringifyAttributes(
                 config,
+                true,
               )}\n${fileContent}\n\`\`\`  `;
             } else if (extname === ".plantuml" || extname === ".puml") {
               // PlantUML
               output = `\`\`\`puml ${stringifyAttributes(
                 config,
+                true,
               )}\n' @mume_file_directory_path:${path.dirname(
                 absoluteFilePath,
               )}\n${fileContent}\n\`\`\`  `;
