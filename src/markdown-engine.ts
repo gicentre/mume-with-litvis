@@ -1,7 +1,7 @@
 // tslint:disable no-var-requires member-ordering
 import {
-  parse as parseBlockAttributes,
-  stringify as stringifyBlockAttributes,
+  parse as parseAttributes,
+  stringify as stringifyAttributes,
 } from "block-attributes";
 import {
   normalize as normalizeBlockInfo,
@@ -46,6 +46,7 @@ import useMarkdownItHTML5Embed from "./custom-markdown-it-features/html5-embed";
 import useMarkdownItMath from "./custom-markdown-it-features/math";
 import useMarkdownItWikilink from "./custom-markdown-it-features/wikilink";
 
+import { VFile } from "vfile";
 import enhanceWithCodeBlockStyling from "./render-enhancers/code-block-styling";
 import enhanceWithEmbeddedLocalImages from "./render-enhancers/embedded-local-images";
 import enhanceWithEmbeddedSvgs from "./render-enhancers/embedded-svgs";
@@ -158,6 +159,8 @@ const dependentLibraryMaterials = [
   },
 ];
 
+let UPDATE_LINTING_REPORT: (vFiles: VFile[]) => void = null;
+
 /**
  * The markdown engine that can be used to parse markdown and export files
  */
@@ -194,6 +197,16 @@ export class MarkdownEngine {
     ) => Promise<string>,
   ) {
     MODIFY_SOURCE = cb;
+  }
+
+  public static async updateLintingReport(vFiles: VFile[]) {
+    if (UPDATE_LINTING_REPORT) {
+      await UPDATE_LINTING_REPORT(vFiles);
+    }
+  }
+
+  public static onUpdateLintingReport(cb: (vFiles: VFile[]) => void) {
+    UPDATE_LINTING_REPORT = cb;
   }
 
   /**
@@ -293,6 +306,7 @@ export class MarkdownEngine {
     useMarkdownItCodeFences(this.md, this.config);
     useMarkdownItCriticMarkup(this.md, this.config);
     useMarkdownItEmoji(this.md, this.config);
+    useMarkdownItLitvisFeatures(this.md, this.config);
     useMarkdownItHTML5Embed(this.md, this.config);
     useMarkdownItMath(this.md, this.config);
     useMarkdownItWikilink(this.md, this.config);
@@ -2563,7 +2577,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
         );
       }
 
-      const attrString = stringifyBlockAttributes(slideConfig, false); // parseAttrString(slideConfig)
+      const attrString = stringifyAttributes(slideConfig, false); // parseAttrString(slideConfig)
       const classString = slideConfig["class"] || "";
       const idString = slideConfig["id"] ? `id="${slideConfig["id"]}"` : "";
 
@@ -2602,7 +2616,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       const attributeMatch = html2.match(/<!--(.+?)-->/);
       if (attributeMatch) {
         const attributes = attributeMatch[1].replace(/\.element\:/, "").trim();
-        const attrObj = parseBlockAttributes(attributes);
+        const attrObj = parseAttributes(attributes);
         for (const key in attrObj) {
           if (attrObj.hasOwnProperty(key)) {
             $elem.attr(key, attrObj[key]);
