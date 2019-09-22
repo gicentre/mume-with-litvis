@@ -10,14 +10,10 @@ import * as YAML from "yamljs";
 import { render as renderDitaa } from "../ditaa";
 import computeChecksum from "../lib/compute-checksum";
 import { render as renderPlantuml } from "../puml";
-import { extensionDirectoryPath, mkdirp, readFile } from "../utility";
+import { mkdirp, readFile } from "../utility";
 import { toSVG as vegaToSvg } from "../vega";
 import { toSVG as vegaLiteToSvg } from "../vega-lite";
-
-const Viz = require(resolve(
-  extensionDirectoryPath,
-  "./dependencies/viz/viz.js",
-));
+import { Viz } from "../viz";
 
 const ensureClassInAttributes = (
   attributes: BlockAttributes,
@@ -148,12 +144,13 @@ async function renderDiagram(
         let svg = diagramInCache;
         if (!svg) {
           const engine = normalizedInfo.attributes["engine"] || "dot";
-          svg = Viz(code, { engine });
+          svg = await Viz(code, { engine });
           graphsCache[checksum] = svg; // store to new cache
         }
         $output = `<p ${stringifyBlockAttributes(
           normalizedInfo.attributes,
         )}>${svg}</p>`;
+        break;
       }
       case "vega":
       case "vega-lite": {
