@@ -1,7 +1,7 @@
 // tslint:disable:ban-types no-var-requires
 import {
   BlockAttributes,
-  stringify as stringifyBlockAttributes,
+  stringify as stringifyAttributes,
 } from "block-attributes";
 import { BlockInfo } from "block-info";
 import { resolve } from "path";
@@ -109,7 +109,7 @@ async function renderDiagram(
       case "sequence":
       case "mermaid": {
         // these diagrams are rendered on the client
-        $output = `<div ${stringifyBlockAttributes(
+        $output = `<div ${stringifyAttributes(
           ensureClassInAttributes(
             normalizedInfo.attributes,
             normalizedInfo.language,
@@ -119,7 +119,7 @@ async function renderDiagram(
       }
       case "wavedrom": {
         // wavedrom is also rendered on the client, but using <script>
-        $output = `<div ${stringifyBlockAttributes(
+        $output = `<div ${stringifyAttributes(
           ensureClassInAttributes(
             normalizedInfo.attributes,
             normalizedInfo.language,
@@ -134,7 +134,7 @@ async function renderDiagram(
           svg = await renderPlantuml(code, fileDirectoryPath);
           graphsCache[checksum] = svg; // store to new cache
         }
-        $output = `<p ${stringifyBlockAttributes(
+        $output = `<p ${stringifyAttributes(
           normalizedInfo.attributes,
         )}>${svg}</p>`;
         break;
@@ -147,7 +147,7 @@ async function renderDiagram(
           svg = await Viz(code, { engine });
           graphsCache[checksum] = svg; // store to new cache
         }
-        $output = `<p ${stringifyBlockAttributes(
+        $output = `<p ${stringifyAttributes(
           normalizedInfo.attributes,
         )}>${svg}</p>`;
         break;
@@ -177,7 +177,7 @@ async function renderDiagram(
             svg = await vegaFunctionToCall(code, fileDirectoryPath);
             graphsCache[checksum] = svg; // store to new cache
           }
-          $output = `<p ${stringifyBlockAttributes(
+          $output = `<p ${stringifyAttributes(
             normalizedInfo.attributes,
           )}>${svg}</p>`;
         }
@@ -229,6 +229,6 @@ async function renderDiagram(
 }
 
 const hiddenCode = (code, attributes, language) =>
-  `<p ${stringifyBlockAttributes(
+  `<p ${stringifyAttributes(
     ensureClassInAttributes(attributes, language),
   )}><span style="display: none">${code}</span></p>`;
