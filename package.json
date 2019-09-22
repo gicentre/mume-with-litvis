@@ -5,7 +5,7 @@
   "main": "out/src/mume.js",
   "typings": "out/src/mume.d.ts",
   "scripts": {
-    "test": "jest --no-coverage",
+    "test": "jest --no-coverage --passWithNoTests",
     "test:coverage": "jest",
     "build": "tsc --project .",
     "build:watch": "tsc --project . --watch",

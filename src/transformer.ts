@@ -1,15 +1,14 @@
 // import * as Baby from "babyparse"
 import * as Baby from "babyparse";
 import {
-  parse as parseAttributes,
-  stringify as stringifyAttributes,
+  parse as parseBlockAttributes,
+  stringify as stringifyBlockAttributes,
 } from "block-attributes";
 import * as fs from "fs";
 import * as less from "less";
 import * as path from "path";
 import * as request from "request";
 import * as temp from "temp";
-import * as uslug from "uslug";
 import HeadingIdGenerator from "./heading-id-generator";
 import computeChecksum from "./lib/compute-checksum";
 import * as utility from "./utility";
@@ -263,9 +262,9 @@ export async function transformMarkdown(
   let codeChunkOffset = 0;
   const slideConfigs = [];
   const JSAndCssFiles = [];
-  const headings = [];
+  let headings = [];
   let tocBracketEnabled = false;
-  const frontMatterString = "";
+  let frontMatterString = "";
 
   /**
    * As the recursive version of this function will cause the error:
@@ -400,7 +399,7 @@ export async function transformMarkdown(
           heading = heading.replace(optMatch[0], "");
 
           try {
-            opt = parseAttributes(optMatch[0]);
+            opt = parseBlockAttributes(optMatch[0]);
 
             (classes = opt["class"]),
               (id = opt["id"]),
@@ -741,8 +740,9 @@ export async function transformMarkdown(
             codeChunkOffset++;
           }
 
-          const output2 = `\`\`\`text ${stringifyAttributes(
+          const output2 = `\`\`\`text ${stringifyBlockAttributes(
             config,
+          )}  \n\`\`\`  `;
           // return helper(end+1, lineNo+1, outputString+output+'\n')
           i = end + 1;
           lineNo = lineNo + 1;
@@ -771,8 +771,9 @@ export async function transformMarkdown(
               const fileExtension = extname.slice(1, extname.length);
               output = `\`\`\`${config["as"] ||
                 fileExtensionToLanguageMap[fileExtension] ||
-                fileExtension} ${stringifyAttributes(
+                fileExtension} ${stringifyBlockAttributes(
                 config,
+              )}  \n${fileContent}\n\`\`\`  `;
             } else if (config && config["cmd"]) {
               if (!config["id"]) {
                 // create `id` for code chunk
@@ -786,8 +787,9 @@ export async function transformMarkdown(
               const fileExtension = extname.slice(1, extname.length);
               output = `\`\`\`${config["as"] ||
                 fileExtensionToLanguageMap[fileExtension] ||
-                fileExtension} ${stringifyAttributes(
+                fileExtension} ${stringifyBlockAttributes(
                 config,
+              )}  \n${fileContent}\n\`\`\`  `;
             } else if ([".md", ".markdown", ".mmark"].indexOf(extname) >= 0) {
               // markdown files
               // this return here is necessary
@@ -824,7 +826,7 @@ export async function transformMarkdown(
               // csv file
               const parseResult = Baby.parse(fileContent.trim());
               if (parseResult.errors.length) {
-                output = `<pre>${parseResult.errors[0]}/pre>  `; as 
+                output = `<pre>${parseResult.errors[0]}/pre>  `;
               } else {
                 // format csv to markdown table
                 output = twoDArrayToMarkdownTable(parseResult.data);
@@ -885,17 +887,17 @@ export async function transformMarkdown(
               extname === ".viz"
             ) {
               // graphviz
-              output = `\`\`\`dot ${stringifyAttributes(
+              output = `\`\`\`dot ${stringifyBlockAttributes(
                 config,
               )}\n${fileContent}\n\`\`\`  `;
             } else if (extname === ".mermaid") {
               // mermaid
-              output = `\`\`\`mermaid ${stringifyAttributes(
+              output = `\`\`\`mermaid ${stringifyBlockAttributes(
                 config,
               )}\n${fileContent}\n\`\`\`  `;
             } else if (extname === ".plantuml" || extname === ".puml") {
               // PlantUML
-              output = `\`\`\`puml ${stringifyAttributes(
+              output = `\`\`\`puml ${stringifyBlockAttributes(
                 config,
               )}\n' @mume_file_directory_path:${path.dirname(
                 absoluteFilePath,
@@ -928,7 +930,7 @@ export async function transformMarkdown(
                 output = `\`\`\`${aS ||
                   fileExtensionToLanguageMap[fileExtension] ||
                   fileExtension} ${
-                  config ? stringifyAttributes(config) : ""
+                  config ? stringifyBlockAttributes(config) : ""
                 }  \n${fileContent}\n\`\`\`  `;
               }
             }
