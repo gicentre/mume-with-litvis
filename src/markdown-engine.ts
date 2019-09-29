@@ -23,6 +23,7 @@ import * as path from "path";
 import * as request from "request";
 import * as slash from "slash";
 import * as toVFile from "to-vfile";
+import { VFile } from "vfile";
 import * as YAML from "yamljs";
 
 import { CodeChunkData } from "./code-chunk-data";
@@ -46,7 +47,6 @@ import useMarkdownItHTML5Embed from "./custom-markdown-it-features/html5-embed";
 import useMarkdownItMath from "./custom-markdown-it-features/math";
 import useMarkdownItWikilink from "./custom-markdown-it-features/wikilink";
 
-import { VFile } from "vfile";
 import enhanceWithCodeBlockStyling from "./render-enhancers/code-block-styling";
 import enhanceWithEmbeddedLocalImages from "./render-enhancers/embedded-local-images";
 import enhanceWithEmbeddedSvgs from "./render-enhancers/embedded-svgs";
@@ -1477,10 +1477,10 @@ for (var i = 0; i < flowcharts.length; i++) {
       sidebarTOCScript = `
 <script>
 ${
-        yamlConfig["html"] && yamlConfig["html"]["toc"]
-          ? `document.body.setAttribute('html-show-sidebar-toc', true)`
-          : ""
-      }
+  yamlConfig["html"] && yamlConfig["html"]["toc"]
+    ? `document.body.setAttribute('html-show-sidebar-toc', true)`
+    : ""
+}
 var sidebarTOCBtn = document.getElementById('sidebar-toc-btn')
 sidebarTOCBtn.addEventListener('click', function(event) {
   event.stopPropagation()
@@ -2597,9 +2597,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
         v += 1;
       }
 
-      output += `<section ${attrString} ${idString}  class=\"slide ${classString}\" data-line="${
-        slideConfig["lineNo"]
-      }" data-h=\"${h}\" data-v="${v}">${slide}</section>`;
+      output += `<section ${attrString} ${idString}  class=\"slide ${classString}\" data-line="${slideConfig["lineNo"]}" data-h=\"${h}\" data-v="${v}">${slide}</section>`;
       i += 1;
     }
     if (i > 0 && slideConfigs[i - 1]["vertical"]) {
@@ -2903,7 +2901,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
     postEnhanceWithLitvis(
       processedNarrative,
       $("body").html(), // cheerio $.html() will add <html><head></head><body>$html</body></html>, so we hack it by select body first.
-      MarkdownEngine.updateLintingReport,
+      MarkdownEngine.updateLintingReport as any,
     );
 
     /**
