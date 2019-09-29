@@ -1,7 +1,7 @@
 // tslint:disable:ban-types no-var-requires
 import {
-  BlockAttributes,
-  stringify as stringifyBlockAttributes,
+  BlockAttributes as Attributes,
+  stringify as stringifyAttributes,
 } from "block-attributes";
 import { BlockInfo } from "block-info";
 import { resolve } from "path";
@@ -10,19 +10,12 @@ import * as YAML from "yamljs";
 import { render as renderDitaa } from "../ditaa";
 import computeChecksum from "../lib/compute-checksum";
 import { render as renderPlantuml } from "../puml";
-import { extensionDirectoryPath, mkdirp, readFile } from "../utility";
+import { mkdirp, readFile } from "../utility";
 import { toSVG as vegaToSvg } from "../vega";
 import { toSVG as vegaLiteToSvg } from "../vega-lite";
+import { Viz } from "../viz";
 
-const Viz = require(resolve(
-  extensionDirectoryPath,
-  "./dependencies/viz/viz.js",
-));
-
-const ensureClassInAttributes = (
-  attributes: BlockAttributes,
-  className: string,
-) => {
+const ensureClassInAttributes = (attributes: Attributes, className: string) => {
   const existingClassNames: string = attributes["class"] || "";
   if (existingClassNames.split(" ").indexOf(className) === -1) {
     return {
@@ -113,7 +106,7 @@ async function renderDiagram(
       case "sequence":
       case "mermaid": {
         // these diagrams are rendered on the client
-        $output = `<div ${stringifyBlockAttributes(
+        $output = `<div ${stringifyAttributes(
           ensureClassInAttributes(
             normalizedInfo.attributes,
             normalizedInfo.language,
@@ -123,7 +116,7 @@ async function renderDiagram(
       }
       case "wavedrom": {
         // wavedrom is also rendered on the client, but using <script>
-        $output = `<div ${stringifyBlockAttributes(
+        $output = `<div ${stringifyAttributes(
           ensureClassInAttributes(
             normalizedInfo.attributes,
             normalizedInfo.language,
@@ -138,7 +131,7 @@ async function renderDiagram(
           svg = await renderPlantuml(code, fileDirectoryPath);
           graphsCache[checksum] = svg; // store to new cache
         }
-        $output = `<p ${stringifyBlockAttributes(
+        $output = `<p ${stringifyAttributes(
           normalizedInfo.attributes,
         )}>${svg}</p>`;
         break;
@@ -148,12 +141,13 @@ async function renderDiagram(
         let svg = diagramInCache;
         if (!svg) {
           const engine = normalizedInfo.attributes["engine"] || "dot";
-          svg = Viz(code, { engine });
+          svg = await Viz(code, { engine });
           graphsCache[checksum] = svg; // store to new cache
         }
-        $output = `<p ${stringifyBlockAttributes(
+        $output = `<p ${stringifyAttributes(
           normalizedInfo.attributes,
         )}>${svg}</p>`;
+        break;
       }
       case "vega":
       case "vega-lite": {
@@ -180,7 +174,7 @@ async function renderDiagram(
             svg = await vegaFunctionToCall(code, fileDirectoryPath);
             graphsCache[checksum] = svg; // store to new cache
           }
-          $output = `<p ${stringifyBlockAttributes(
+          $output = `<p ${stringifyAttributes(
             normalizedInfo.attributes,
           )}>${svg}</p>`;
         }
@@ -232,6 +226,6 @@ async function renderDiagram(
 }
 
 const hiddenCode = (code, attributes, language) =>
-  `<p ${stringifyBlockAttributes(
+  `<p ${stringifyAttributes(
     ensureClassInAttributes(attributes, language),
   )}><span style="display: none">${code}</span></p>`;

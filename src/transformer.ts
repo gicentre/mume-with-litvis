@@ -1,15 +1,15 @@
 // import * as Baby from "babyparse"
 import * as Baby from "babyparse";
 import {
-  parse as parseBlockAttributes,
-  stringify as stringifyBlockAttributes,
+  parse as parseAttributes,
+  stringify as stringifyAttributes,
 } from "block-attributes";
 import * as fs from "fs";
-import * as less from "less";
+import { render as renderLess } from "less";
 import * as path from "path";
 import * as request from "request";
 import * as temp from "temp";
-import * as uslug from "uslug";
+import HeadingIdGenerator from "./heading-id-generator";
 import computeChecksum from "./lib/compute-checksum";
 import * as utility from "./utility";
 
@@ -64,7 +64,7 @@ export interface TransformMarkdownOptions {
   notSourceFile?: boolean;
   imageDirectoryPath?: string;
   usePandocParser: boolean;
-  tocTable?: { [key: string]: number };
+  headingIdGenerator?: HeadingIdGenerator;
 }
 
 const fileExtensionToLanguageMap = {
@@ -182,17 +182,13 @@ async function loadFile(
     // less file
     const data = await utility.readFile(filePath, { encoding: "utf-8" });
     return await new Promise<string>((resolve, reject) => {
-      less.render(
-        data,
-        { paths: [path.dirname(filePath)] },
-        (error, output) => {
-          if (error) {
-            return reject(error);
-          } else {
-            return resolve(output.css || "");
-          }
-        },
-      );
+      renderLess(data, { paths: [path.dirname(filePath)] }, (error, output) => {
+        if (error) {
+          return reject(error);
+        } else {
+          return resolve(output.css || "");
+        }
+      });
     });
   } else if (filePath.endsWith(".pdf")) {
     // pdf file
@@ -255,7 +251,7 @@ export async function transformMarkdown(
     notSourceFile = false,
     imageDirectoryPath = "",
     usePandocParser = false,
-    tocTable = {},
+    headingIdGenerator = new HeadingIdGenerator(),
   }: TransformMarkdownOptions,
 ): Promise<TransformMarkdownOutput> {
   let lastOpeningCodeBlockFence: string = null;
@@ -350,10 +346,10 @@ export async function transformMarkdown(
           outputString += createAnchor(lineNo); // insert anchor for scroll sync
         }
         /* tslint:disable-next-line:no-conditional-assignment */
-      } else if ((headingMatch = line.match(/^(\#{1,7})(.+)/))) {
-        /* ((headingMatch = line.match(/^(\#{1,7})(.+)$/)) || 
-                  // the ==== and --- headers don't work well. For example, table and list will affect it, therefore I decide not to support it.  
-                  (inputString[end + 1] === '=' && inputString[end + 2] === '=') || 
+      } else if ((headingMatch = line.match(/^(\#{1,7}).*/))) {
+        /* ((headingMatch = line.match(/^(\#{1,7})(.+)$/)) ||
+                  // the ==== and --- headers don't work well. For example, table and list will affect it, therefore I decide not to support it.
+                  (inputString[end + 1] === '=' && inputString[end + 2] === '=') ||
                   (inputString[end + 1] === '-' && inputString[end + 2] === '-')) */ // headings
 
         if (forPreview) {
@@ -363,7 +359,7 @@ export async function transformMarkdown(
         let level;
         let tag;
         // if (headingMatch) {
-        heading = headingMatch[2].trim();
+        heading = line.replace(headingMatch[1], "");
         tag = headingMatch[1];
         level = tag.length;
         /*} else {
@@ -374,35 +370,39 @@ export async function transformMarkdown(
             } else {
               heading = line.trim()
               tag = '##'
-              level = 2     
+              level = 2
             }
-            
+
             end = inputString.indexOf('\n', end + 1)
             if (end < 0) end = inputString.length
           }*/
 
-        if (!heading.length) {
+        /*if (!heading.length) {
           // return helper(end+1, lineNo+1, outputString + '\n')
           i = end + 1;
           lineNo = lineNo + 1;
           outputString = outputString + "\n";
           continue;
-        }
+        }*/
 
         // check {class:string, id:string, ignore:boolean}
-        const optMatch = heading.match(/[^\\]\{(.+?)\}(\s*)$/);
+        const optMatch = heading.match(/(\s+\{|^\{)(.+?)\}(\s*)$/);
         let classes = "";
         let id = "";
         let ignore = false;
+        let opt;
         if (optMatch) {
           heading = heading.replace(optMatch[0], "");
 
           try {
-            const opt = parseBlockAttributes(optMatch[0]);
+            opt = parseAttributes(optMatch[0]);
 
             (classes = opt["class"]),
               (id = opt["id"]),
               (ignore = opt["ignore"]);
+            delete opt["class"];
+            delete opt["id"];
+            delete opt["ignore"];
           } catch (e) {
             heading = "OptionsError: " + optMatch[1];
             ignore = true;
@@ -410,20 +410,13 @@ export async function transformMarkdown(
         }
 
         if (!id) {
-          id = uslug(heading);
+          id = headingIdGenerator.generateId(heading);
           if (usePandocParser) {
             id = id.replace(/^[\d\-]+/, "");
             if (!id) {
               id = "section";
             }
           }
-        }
-
-        if (tocTable[id] >= 0) {
-          tocTable[id] += 1;
-          id = id + "-" + tocTable[id];
-        } else {
-          tocTable[id] = 0;
         }
 
         if (!ignore) {
@@ -438,6 +431,15 @@ export async function transformMarkdown(
           }
           if (classes) {
             optionsStr += "." + classes.replace(/\s+/g, " .") + " ";
+          }
+          if (opt) {
+            for (const key in opt) {
+              if (typeof opt[key] === "number") {
+                optionsStr += " " + key + "=" + opt[key];
+              } else {
+                optionsStr += " " + key + '="' + opt[key] + '"';
+              }
+            }
           }
           optionsStr += "}";
 
@@ -508,7 +510,7 @@ export async function transformMarkdown(
 
             let options = {};
             if (optionsMatch && optionsMatch[2]) {
-              options = parseBlockAttributes(optionsMatch[2]);
+              options = parseAttributes(optionsMatch[2]);
             }
             options["lineNo"] = lineNo;
 
@@ -635,7 +637,7 @@ export async function transformMarkdown(
           if (rightParen > 0) {
             configStr = line.substring(leftParen + 1, rightParen);
             try {
-              config = parseBlockAttributes(configStr);
+              config = parseAttributes(configStr);
             } catch (error) {
               // null
             }
@@ -734,7 +736,7 @@ export async function transformMarkdown(
             codeChunkOffset++;
           }
 
-          const output2 = `\`\`\`text ${stringifyBlockAttributes(
+          const output2 = `\`\`\`text ${stringifyAttributes(
             config,
           )}  \n\`\`\`  `;
           // return helper(end+1, lineNo+1, outputString+output+'\n')
@@ -744,18 +746,28 @@ export async function transformMarkdown(
           continue;
         } else {
           try {
-            const fileContent = await loadFile(
+            let fileContent = await loadFile(
               absoluteFilePath,
               { fileDirectoryPath, forPreview, imageDirectoryPath },
               filesCache,
             );
             filesCache[absoluteFilePath] = fileContent;
 
+            if (config && (config["line_begin"] || config["line_end"])) {
+              const lines = fileContent.split(/\n/);
+              fileContent = lines
+                .slice(
+                  parseInt(config["line_begin"], 10) || 0,
+                  parseInt(config["line_end"], 10) || lines.length,
+                )
+                .join("\n");
+            }
+
             if (config && config["code_block"]) {
               const fileExtension = extname.slice(1, extname.length);
               output = `\`\`\`${config["as"] ||
                 fileExtensionToLanguageMap[fileExtension] ||
-                fileExtension} ${stringifyBlockAttributes(
+                fileExtension} ${stringifyAttributes(
                 config,
               )}  \n${fileContent}\n\`\`\`  `;
             } else if (config && config["cmd"]) {
@@ -771,7 +783,7 @@ export async function transformMarkdown(
               const fileExtension = extname.slice(1, extname.length);
               output = `\`\`\`${config["as"] ||
                 fileExtensionToLanguageMap[fileExtension] ||
-                fileExtension} ${stringifyBlockAttributes(
+                fileExtension} ${stringifyAttributes(
                 config,
               )}  \n${fileContent}\n\`\`\`  `;
             } else if ([".md", ".markdown", ".mmark"].indexOf(extname) >= 0) {
@@ -793,7 +805,7 @@ export async function transformMarkdown(
                 notSourceFile: true, // <= this is not the sourcefile
                 imageDirectoryPath,
                 usePandocParser,
-                tocTable,
+                headingIdGenerator,
               }));
               output2 = "\n" + output2 + "  ";
               headings = headings.concat(headings2);
@@ -871,19 +883,19 @@ export async function transformMarkdown(
               extname === ".viz"
             ) {
               // graphviz
-              output = `\`\`\`dot ${stringifyBlockAttributes(
+              output = `\`\`\`dot ${stringifyAttributes(
                 config,
                 true,
               )}\n${fileContent}\n\`\`\`  `;
             } else if (extname === ".mermaid") {
               // mermaid
-              output = `\`\`\`mermaid ${stringifyBlockAttributes(
+              output = `\`\`\`mermaid ${stringifyAttributes(
                 config,
                 true,
               )}\n${fileContent}\n\`\`\`  `;
             } else if (extname === ".plantuml" || extname === ".puml") {
               // PlantUML
-              output = `\`\`\`puml ${stringifyBlockAttributes(
+              output = `\`\`\`puml ${stringifyAttributes(
                 config,
                 true,
               )}\n' @mume_file_directory_path:${path.dirname(
@@ -894,7 +906,7 @@ export async function transformMarkdown(
               else if extname in ['.wavedrom']
                 output = "```wavedrom\n${fileContent}\n```  "
                 # filesCache?[absoluteFilePath] = output
-              
+
               else if extname == '.js'
                 if forPreview
                   output = '' # js code is evaluated and there is no need to display the code.
@@ -909,12 +921,17 @@ export async function transformMarkdown(
               if (config) {
                 aS = config["as"];
               }
-              const fileExtension = extname.slice(1, extname.length);
-              output = `\`\`\`${aS ||
-                fileExtensionToLanguageMap[fileExtension] ||
-                fileExtension} ${
-                config ? stringifyBlockAttributes(config) : ""
-              }  \n${fileContent}\n\`\`\`  `;
+              if (config && config["code_block"] === false) {
+                // https://github.com/shd101wyy/markdown-preview-enhanced/issues/916
+                output = fileContent;
+              } else {
+                const fileExtension = extname.slice(1, extname.length);
+                output = `\`\`\`${aS ||
+                  fileExtensionToLanguageMap[fileExtension] ||
+                  fileExtension} ${
+                  config ? stringifyAttributes(config) : ""
+                }  \n${fileContent}\n\`\`\`  `;
+              }
             }
 
             // return helper(end+1, lineNo+1, outputString+output+'\n')

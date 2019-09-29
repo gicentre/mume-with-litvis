@@ -4,6 +4,7 @@ import { run } from "../code-chunk";
 import { CodeChunkData, CodeChunksData } from "../code-chunk-data";
 import { MarkdownEngineRenderOption } from "../markdown-engine";
 import { toc } from "../toc";
+import { extractCommandFromBlockInfo } from "../utility";
 
 export default async function enhance(
   $,
@@ -195,7 +196,7 @@ export async function runCodeChunk(
         ordered: normalizedAttributes["ordered_list"],
         depthFrom: normalizedAttributes["depth_from"],
         depthTo: normalizedAttributes["depth_to"],
-        tab: normalizedAttributes["tab"] || "\t",
+        tab: normalizedAttributes["tab"] || "  ",
         ignoreLink: normalizedAttributes["ignore_link"],
       });
       result = tocObject.content;
@@ -279,6 +280,3 @@ export async function runCodeChunks(
   }
   return Promise.all(asyncFunctions);
 }
-
-const extractCommandFromBlockInfo = (info: BlockInfo) =>
-  info.attributes["cmd"] === true ? info.language : info.attributes["cmd"];

@@ -1,12 +1,13 @@
 import * as child_process from "child_process";
 import * as fs from "fs";
-import * as matter from "gray-matter";
-import * as less from "less";
+import * as jsYAML from "js-yaml";
+import { render as renderLess } from "less";
 import * as mkdirp_ from "mkdirp";
 import * as os from "os";
 import * as path from "path";
 import * as vm from "vm";
 
+import { BlockInfo } from "block-info";
 import * as temp from "temp";
 temp.track();
 
@@ -63,11 +64,14 @@ export function parseYAML(yaml: string = "") {
     return {}
   }
   */
-  if (!yaml.startsWith("---")) {
-    yaml = "---\n" + yaml.trim() + "\n---\n";
+  if (yaml.startsWith("---")) {
+    yaml = yaml
+      .trim()
+      .replace(/^---\r?\n/, "")
+      .replace(/\r?\n---$/, "");
   }
   try {
-    return matter(yaml).data;
+    return jsYAML.safeLoad(yaml);
   } catch (error) {
     return {};
   }
@@ -155,17 +159,22 @@ export function mkdirp(dir: string): Promise<boolean> {
  * open html file in browser or open pdf file in reader ... etc
  * @param filePath
  */
-export function openFile(filePath) {
-  let cmd;
+export function openFile(filePath: string) {
   if (process.platform === "win32") {
-    cmd = "explorer.exe";
+    if (filePath.match(/^[a-zA-Z]:\\/)) {
+      // C:\ like url.
+      filePath = "file:///" + filePath;
+    }
+    if (filePath.startsWith("file:///")) {
+      return child_process.execFile("explorer.exe", [filePath]);
+    } else {
+      return child_process.exec(`start ${filePath}`);
+    }
   } else if (process.platform === "darwin") {
-    cmd = "open";
+    child_process.execFile("open", [filePath]);
   } else {
-    cmd = "xdg-open";
+    child_process.execFile("xdg-open", [filePath]);
   }
-
-  child_process.execFile(cmd, [filePath]);
 }
 
 /**
@@ -206,7 +215,7 @@ export async function getGlobalStyles(): Promise<string> {
   }
 
   return await new Promise<string>((resolve, reject) => {
-    less.render(
+    renderLess(
       fileContent,
       { paths: [path.dirname(globalLessFilePath)] },
       (error, output) => {
@@ -254,57 +263,6 @@ MERMAID_CONFIG = {
   return mermaidConfig;
 }
 
-/**
- * load ~/.mume/phantomjs_config.js file.
- */
-export async function getPhantomjsConfig(): Promise<object> {
-  const homeDir = os.homedir();
-  const phantomjsConfigPath = path.resolve(
-    homeDir,
-    "./.mume/phantomjs_config.js",
-  );
-
-  let phantomjsConfig: object;
-  if (fs.existsSync(phantomjsConfigPath)) {
-    try {
-      delete require.cache[phantomjsConfigPath]; // return uncached
-      phantomjsConfig = require(phantomjsConfigPath);
-    } catch (e) {
-      phantomjsConfig = {};
-    }
-  } else {
-    const fileContent = `/*
-configure header and footer (and other options)
-more information can be found here:
-    https://github.com/marcbachmann/node-html-pdf
-Attention: this config will override your config in exporter panel.
-
-eg:
-
-  let config = {
-    "header": {
-      "height": "45mm",
-      "contents": '<div style="text-align: center;">Author: Marc Bachmann</div>'
-    },
-    "footer": {
-      "height": "28mm",
-      "contents": '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>'
-    }
-  }
-*/
-// you can edit the 'config' variable below
-let config = {
-}
-
-module.exports = config || {}
-`;
-    await writeFile(phantomjsConfigPath, fileContent, { encoding: "utf-8" });
-    phantomjsConfig = {};
-  }
-
-  return phantomjsConfig;
-}
-
 export const defaultMathjaxConfig = {
   extensions: ["tex2jax.js"],
   jax: ["input/TeX", "output/HTML-CSS"],
@@ -324,8 +282,12 @@ export const defaultMathjaxConfig = {
   "HTML-CSS": { availableFonts: ["TeX"] },
 };
 
+export const defaultKaTeXConfig = {
+  macros: {},
+};
+
 /**
- * load ~/.mume/mermaid_config.js file.
+ * load ~/.mume/mathjax_config.js file.
  */
 export async function getMathJaxConfig(): Promise<object> {
   const homeDir = os.homedir();
@@ -360,6 +322,32 @@ module.exports = {
   }
 
   return mathjaxConfig;
+}
+
+/**
+ * load ~/.mume/katex_config.js file
+ */
+export async function getKaTeXConfig(): Promise<object> {
+  const homeDir = os.homedir();
+  const katexConfigPath = path.resolve(homeDir, "./.mume/katex_config.js");
+
+  let katexConfig: object;
+  if (fs.existsSync(katexConfigPath)) {
+    try {
+      delete require.cache[katexConfigPath]; // return uncached
+      katexConfig = require(katexConfigPath);
+    } catch (e) {
+      katexConfig = defaultKaTeXConfig;
+    }
+  } else {
+    const fileContent = `
+module.exports = {
+  macros: {}
+}`;
+    await writeFile(katexConfigPath, fileContent, { encoding: "utf-8" });
+    katexConfig = defaultKaTeXConfig;
+  }
+  return katexConfig;
 }
 
 export async function getExtensionConfig(): Promise<object> {
@@ -451,14 +439,28 @@ export function isArrayEqual(x, y) {
 }
 
 /**
- * Add file:// to file path
+ * Add file:/// to file path
+ * If it's for VSCode preview, add vscode-resource:/// to file path
  * @param filePath
  */
-export function addFileProtocol(filePath: string): string {
-  if (!filePath.startsWith("file://")) {
-    filePath = "file:///" + filePath;
+export function addFileProtocol(
+  filePath: string,
+  isForVSCodePreview?: boolean,
+): string {
+  if (isForVSCodePreview) {
+    if (!filePath.startsWith("vscode-resource://")) {
+      filePath = "vscode-resource:///" + filePath;
+    }
+    filePath = filePath.replace(
+      /^vscode\-resource\:\/+/,
+      "vscode-resource:///",
+    );
+  } else {
+    if (!filePath.startsWith("file://")) {
+      filePath = "file:///" + filePath;
+    }
+    filePath = filePath.replace(/^file\:\/+/, "file:///");
   }
-  filePath = filePath.replace(/^file\:\/+/, "file:///");
   return filePath;
 }
 
@@ -468,9 +470,9 @@ export function addFileProtocol(filePath: string): string {
  */
 export function removeFileProtocol(filePath: string): string {
   if (process.platform === "win32") {
-    return filePath.replace(/^file\:\/+/, "");
+    return filePath.replace(/^(file|vscode\-resource)\:\/+/, "");
   } else {
-    return filePath.replace(/^file\:\/+/, "/");
+    return filePath.replace(/^(file|vscode\-resource)\:\/+/, "/");
   }
 }
 
@@ -478,16 +480,16 @@ export function removeFileProtocol(filePath: string): string {
  * style.less,
  * mathjax_config.js,
  * mermaid_config.js
- * phantomjs_config.js
  * config.json
  *
  * files
  */
+// @ts-ignore
 export const configs: {
   globalStyle: string;
   mathjaxConfig: object;
+  katexConfig: object;
   mermaidConfig: string;
-  phantomjsConfig: object;
   parserConfig: object;
   /**
    * Please note that this is not necessarily MarkdownEngineConfig
@@ -496,8 +498,8 @@ export const configs: {
 } = {
   globalStyle: "",
   mathjaxConfig: defaultMathjaxConfig,
+  katexConfig: defaultKaTeXConfig,
   mermaidConfig: "MERMAID_CONFIG = {startOnLoad: false}",
-  phantomjsConfig: {},
   parserConfig: {},
   config: {},
 };
@@ -571,7 +573,7 @@ export async function allowUnsafeEvalAndUnsafeNewFunctionAsync(
   }
 }
 
-export const loadDependency = (dependencyPath) =>
+export const loadDependency = (dependencyPath: string) =>
   allowUnsafeEval(() =>
     allowUnsafeNewFunction(() =>
       require(path.resolve(
@@ -581,6 +583,9 @@ export const loadDependency = (dependencyPath) =>
       )),
     ),
   );
+
+export const extractCommandFromBlockInfo = (info: BlockInfo) =>
+  info.attributes["cmd"] === true ? info.language : info.attributes["cmd"];
 
 export function Function(...args: string[]) {
   let body = "";
