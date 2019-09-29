@@ -1,4 +1,4 @@
-import * as uslug from "uslug";
+import uslug from "uslug";
 
 export default class HeadingIdGenerator {
   private table: { [key: string]: number };

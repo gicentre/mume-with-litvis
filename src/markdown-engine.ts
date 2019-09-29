@@ -22,7 +22,7 @@ import * as os from "os";
 import * as path from "path";
 import * as request from "request";
 import * as slash from "slash";
-import * as toVFile from "to-vfile";
+import toVFile from "to-vfile";
 import { VFile } from "vfile";
 import * as YAML from "yamljs";
 
@@ -2897,12 +2897,14 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       enhanceWithEmojiToSvg($);
     }
 
-    html = frontMatterTable + $("head").html();
-    postEnhanceWithLitvis(
-      processedNarrative,
-      $("body").html(), // cheerio $.html() will add <html><head></head><body>$html</body></html>, so we hack it by select body first.
-      MarkdownEngine.updateLintingReport as any,
-    );
+    html =
+      frontMatterTable +
+      $("head").html() +
+      postEnhanceWithLitvis(
+        processedNarrative,
+        $("body").html(), // cheerio $.html() will add <html><head></head><body>$html</body></html>, so we hack it by select body first.
+        MarkdownEngine.updateLintingReport as any,
+      );
 
     /**
      * check slides

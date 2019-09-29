@@ -5,7 +5,7 @@ import {
   stringify as stringifyAttributes,
 } from "block-attributes";
 import * as fs from "fs";
-import * as less from "less";
+import { render as renderLess } from "less";
 import * as path from "path";
 import * as request from "request";
 import * as temp from "temp";
@@ -182,17 +182,13 @@ async function loadFile(
     // less file
     const data = await utility.readFile(filePath, { encoding: "utf-8" });
     return await new Promise<string>((resolve, reject) => {
-      less.render(
-        data,
-        { paths: [path.dirname(filePath)] },
-        (error, output) => {
-          if (error) {
-            return reject(error);
-          } else {
-            return resolve(output.css || "");
-          }
-        },
-      );
+      renderLess(data, { paths: [path.dirname(filePath)] }, (error, output) => {
+        if (error) {
+          return reject(error);
+        } else {
+          return resolve(output.css || "");
+        }
+      });
     });
   } else if (filePath.endsWith(".pdf")) {
     // pdf file
