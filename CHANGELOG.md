@@ -1,6 +1,10 @@
 This changelog is for the fork.
 See [`CHANGELOG-UPSTREAM.md`](CHANGELOG-UPSTREAM.md) of the changelog related to the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.17.0
+
+- Upgrade vega to 5.7.0, vega-lite to 4.0.0-beta.8, vega-embed to 5.1.3 and vega-loader-arrow to 0.14.1
+
 ## 0.16.0
 
 - Sync with upstream package to resolve various issues in the latest versions of editors (https://github.com/gicentre/mume-with-litvis/pull/1)
