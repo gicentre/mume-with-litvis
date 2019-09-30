@@ -3,6 +3,7 @@ I managed many libraries by myself instead of through npm to reduce overall file
 **Versions**
 ```json
 {
+    "apache-arrow": "0.14.1",
     "mermaid": "8.1.0",
     "plantuml": "mit-1.2019.7",
     "wavedrom": "1.4.1",
@@ -16,9 +17,10 @@ I managed many libraries by myself instead of through npm to reduce overall file
     "katex": "v0.10.2",
     "crypto-js": "3.9.1-1",
     "jquery-modal": "0.8.0",
-    "vega": "5.4.0",
-    "vega-lite": "3.3.0",
-    "vega-embed": "4.2.0",
+    "vega": "5.7.0",
+    "vega-lite": "4.0.0-beta.8",
+    "vega-embed": "5.1.3",
+    "vega-loader-arrow": "0.14.1",
     "ditaa": "0.10",
     "font-awesome": "4.7",
     "flowchart": "1.11.3",
