@@ -32,6 +32,9 @@ const supportedLanguages = [
   "mermaid",
   "puml",
   "plantuml",
+  "zenuml",
+  "seq",
+  "sequence-diagram",
   "wavedrom",
   "viz",
   "dot",
@@ -112,6 +115,18 @@ async function renderDiagram(
             normalizedInfo.language,
           ),
         )}>${code}</div>`;
+        break;
+      }
+      case "zenuml":
+      case "seq":
+      case "sequence-diagram": {
+        // sequence-diagram is a web-component, so we just need to add this tag
+        $output = `<div ${stringifyAttributes(
+          ensureClassInAttributes(
+            normalizedInfo.attributes,
+            normalizedInfo.language,
+          ),
+        )}><sequence-diagram>${code}</sequence-diagram></div>`;
         break;
       }
       case "wavedrom": {
