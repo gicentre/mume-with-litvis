@@ -138,15 +138,15 @@ let MODIFY_SOURCE: (
 const dependentLibraryMaterials = [
   {
     key: "vega",
-    version: "5.7.3",
+    version: "5.9.0",
   },
   {
     key: "vega-lite",
-    version: "4.0.0-beta.11",
+    version: "4.0.0",
   },
   {
     key: "vega-embed",
-    version: "6.0.0",
+    version: "6.2.1",
   },
   {
     key: "apache-arrow",
