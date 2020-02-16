@@ -142,7 +142,7 @@ const dependentLibraryMaterials = [
   },
   {
     key: "vega-lite",
-    version: "4.1.1",
+    version: "4.3.1",
   },
   {
     key: "vega-embed",

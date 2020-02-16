@@ -1,6 +1,14 @@
 This changelog is for the fork.
 See [`CHANGELOG-UPSTREAM.md`](CHANGELOG-UPSTREAM.md) of the changelog related to the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.21.0
+
+- Upgrade vega-lite to 4.3.1
+
+## 0.20.0
+
+- Upgrade vega to 5.9.1, vega-lite to 4.1.1 and vega-embed to 6.2.2
+
 ## 0.19.0
 
 - Upgrade vega-lite to 4.0.0-beta.11, fix outdated vega versions in CDN links (affects interactive mode only)
