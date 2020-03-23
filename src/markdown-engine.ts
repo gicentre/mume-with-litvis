@@ -142,11 +142,11 @@ const dependentLibraryMaterials = [
   },
   {
     key: "vega-lite",
-    version: "4.5.1",
+    version: "4.8.1",
   },
   {
     key: "vega-embed",
-    version: "6.3.2",
+    version: "6.5.1",
   },
   {
     key: "apache-arrow",
