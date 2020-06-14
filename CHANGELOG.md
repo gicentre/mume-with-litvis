@@ -1,6 +1,14 @@
 This changelog is for the fork.
 See [`CHANGELOG-UPSTREAM.md`](CHANGELOG-UPSTREAM.md) of the changelog related to the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.25.0
+
+- Upgrade vega to 5.13.0, vega-lite to 4.13.1 and vega-embed to 6.9.0
+
+## 0.24.0
+
+- Bump vega to 5.10.1, vega-lite to 4.10.2 and vega-embed to 6.5.2
+
 ## 0.23.0
 
 - Upgrade vega-lite to 4.8.1 and vega-embed to 6.5.1
@@ -32,13 +40,13 @@ See [`CHANGELOG-UPSTREAM.md`](CHANGELOG-UPSTREAM.md) of the changelog related to
 
 ## 0.16.0
 
-- Sync with upstream package to resolve various issues in the latest versions of editors (https://github.com/gicentre/mume-with-litvis/pull/1)
+- Sync with upstream package to resolve various issues in the latest versions of editors (<https://github.com/gicentre/mume-with-litvis/pull/1)>
 
 ## 0.15.0
 
 - Upgrade vega to 5.4.0 and vega-embed to 4.2.0
-- Support apache-arrow files in vega specs (https://github.com/gicentre/litvis/issues/31)
-- Fix incorrect parsing of keys in elm string representation (https://github.com/gicentre/litvis/issues/29#issuecomment-496008915)
+- Support apache-arrow files in vega specs (<https://github.com/gicentre/litvis/issues/31)>
+- Fix incorrect parsing of keys in elm string representation (<https://github.com/gicentre/litvis/issues/29#issuecomment-496008915)>
 
 ## 0.14.4
 
