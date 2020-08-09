@@ -1,6 +1,6 @@
 {
   "name": "mume-with-litvis",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "Fork of mume with added http://litvis.org/",
   "keywords": [
     "markdown"
@@ -56,7 +56,7 @@
     "js-yaml": "^3.13.1",
     "less": "^3.9.0",
     "litvis-integration-mume": "^0.9.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mkdirp": "^0.5.1",
     "node-fetch": "^2.6.0",
     "puppeteer-core": "1.15.0",
