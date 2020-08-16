@@ -7,7 +7,7 @@ import {
   normalize as normalizeBlockInfo,
   parse as parseBlockInfo,
 } from "block-info";
-import * as cheerio from "cheerio";
+import cheerio from "cheerio";
 import { execFile } from "child_process";
 import * as fs from "fs";
 import {
