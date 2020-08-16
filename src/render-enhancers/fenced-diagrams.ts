@@ -4,13 +4,12 @@ import {
   stringify as stringifyAttributes,
 } from "block-attributes";
 import { BlockInfo } from "block-info";
-import { resolve } from "path";
 import * as YAML from "yamljs";
 
 import { render as renderDitaa } from "../ditaa";
 import computeChecksum from "../lib/compute-checksum";
 import { render as renderPlantuml } from "../puml";
-import { mkdirp, readFile } from "../utility";
+import { escapeString } from "../utility";
 import { toSVG as vegaToSvg } from "../vega";
 import { toSVG as vegaLiteToSvg } from "../vega-lite";
 import { Viz } from "../viz";
@@ -114,7 +113,7 @@ async function renderDiagram(
             normalizedInfo.attributes,
             normalizedInfo.language,
           ),
-        )}>${code}</div>`;
+        )}>${escapeString(code)}</div>`;
         break;
       }
       case "zenuml":
@@ -205,22 +204,11 @@ async function renderDiagram(
 
         // ditaa diagram
         const args = normalizedInfo.attributes["args"] || [];
-        const filename =
-          normalizedInfo.attributes["filename"] ||
-          `${computeChecksum(`${JSON.stringify(args)} ${code}`)}.png`;
-        await mkdirp(imageDirectoryPath);
 
-        const pathToPng = await renderDitaa(
-          code,
-          args,
-          resolve(imageDirectoryPath, filename),
-        );
-        const pathToPngWithoutVersion = pathToPng.replace(/\?[\d\.]+$/, "");
-        const pngAsBase64 = await readFile(pathToPngWithoutVersion, "base64");
-        $output = $("<img />").attr(
-          "src",
-          `data:image/png;charset=utf-8;base64,${pngAsBase64}`,
-        );
+        const svg = await renderDitaa(code, args);
+        $output = `<p ${stringifyAttributes(
+          normalizedInfo.attributes,
+        )}>${svg}</p>`;
         break;
       }
     }

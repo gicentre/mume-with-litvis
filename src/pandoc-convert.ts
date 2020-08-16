@@ -7,6 +7,7 @@ import { processGraphs } from "./process-graphs";
 import { toc } from "./toc";
 import { transformMarkdown } from "./transformer";
 import * as utility from "./utility";
+import mkdirp = require("mkdirp");
 
 function getFileExtension(documentType: string) {
   if (
@@ -59,10 +60,6 @@ function processOutputConfig(
 
   if (config["highlight"] === null) {
     args.push("--no-highlight");
-  }
-
-  if (config["pandoc_args"]) {
-    config["pandoc_args"].forEach((arg) => args.push(arg));
   }
 
   if (config["citation_package"]) {
@@ -131,6 +128,12 @@ function processOutputConfig(
 
   if (config["template"]) {
     args.push("--template=" + config["template"]);
+  }
+
+  // All other arguments give here can override the
+  // defaults from above
+  if (config["pandoc_args"]) {
+    config["pandoc_args"].forEach((arg) => args.push(arg));
   }
 }
 
@@ -279,6 +282,9 @@ export async function pandocConvert(
     pandocPath,
     latexEngine,
     imageMagickPath,
+    mermaidTheme,
+    onWillTransformMarkdown = null,
+    onDidTransformMarkdown = null,
   },
   config = {},
 ): Promise<string> {
@@ -364,6 +370,10 @@ export async function pandocConvert(
   // process output config
   processOutputConfig(outputConfig || {}, args, latexEngine);
 
+  if (onWillTransformMarkdown) {
+    text = await onWillTransformMarkdown(text);
+  }
+
   // import external files
   const data = await transformMarkdown(text, {
     fileDirectoryPath,
@@ -373,8 +383,14 @@ export async function pandocConvert(
     protocolsWhiteListRegExp,
     forPreview: false,
     usePandocParser: true,
+    onWillTransformMarkdown,
+    onDidTransformMarkdown,
   });
   text = data.outputString;
+
+  if (onDidTransformMarkdown) {
+    text = await onDidTransformMarkdown(text);
+  }
 
   // add front-matter(yaml) back to text
   text = "---\n" + YAML.stringify(config) + "---\n" + text;
@@ -397,7 +413,15 @@ export async function pandocConvert(
   text = processPaths(text, fileDirectoryPath, projectDirectoryPath);
 
   // citation
-  if (config["bibliography"] || config["references"]) {
+  const noDefaultsOrCiteProc =
+    args.find((el) => {
+      return el.includes("pandoc-citeproc") || el.includes("--defaults");
+    }) === undefined;
+
+  if (
+    noDefaultsOrCiteProc &&
+    (config["bibliography"] || config["references"])
+  ) {
     args.push("--filter", "pandoc-citeproc");
   }
 
@@ -409,7 +433,7 @@ export async function pandocConvert(
   } else {
     imageDirectoryPath = path.resolve(fileDirectoryPath, imageDirectoryPath);
   }
-  await utility.mkdirp(imageDirectoryPath); // create imageDirectoryPath
+  await mkdirp(imageDirectoryPath); // create imageDirectoryPath
 
   const { outputString } = await processGraphs(text, {
     fileDirectoryPath,
@@ -420,11 +444,13 @@ export async function pandocConvert(
     codeChunksData,
     graphsCache,
     imageMagickPath,
+    mermaidTheme,
+    addOptionsStr: true,
   });
 
   // pandoc will cause error if directory doesn't exist,
   // therefore I will create directory first.
-  await utility.mkdirp(path.dirname(outputFilePath));
+  await mkdirp(path.dirname(outputFilePath));
 
   return await new Promise<string>((resolve, reject) => {
     const program = execFile(
