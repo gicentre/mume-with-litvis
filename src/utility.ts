@@ -1,7 +1,7 @@
 import * as child_process from "child_process";
 import * as fs from "fs";
 import * as jsYAML from "js-yaml";
-import { render as renderLess } from "less";
+import * as less from "less";
 import { BlockInfo } from "block-info";
 import * as os from "os";
 import * as path from "path";
@@ -205,7 +205,7 @@ export async function getGlobalStyles(configPath): Promise<string> {
   }
 
   return await new Promise<string>((resolve, reject) => {
-    renderLess(
+    less.render(
       fileContent,
       { paths: [path.dirname(globalLessFilePath)] },
       (error, output) => {
