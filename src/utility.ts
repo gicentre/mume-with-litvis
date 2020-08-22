@@ -2,7 +2,6 @@ import * as child_process from "child_process";
 import * as fs from "fs";
 import * as jsYAML from "js-yaml";
 import { render as renderLess } from "less";
-
 import { BlockInfo } from "block-info";
 import * as os from "os";
 import * as path from "path";
