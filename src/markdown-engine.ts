@@ -22,7 +22,7 @@ import * as os from "os";
 import * as path from "path";
 import * as request from "request";
 import * as slash from "slash";
-import toVFile from "to-vfile";
+import * as toVFile from "to-vfile";
 import { VFile } from "vfile";
 import * as YAML from "yamljs";
 import * as vscode from "vscode";
