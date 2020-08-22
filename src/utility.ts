@@ -510,82 +510,58 @@ export const configs: {
 
 export { uploadImage } from "./image-uploader";
 
-/**
- * Allow unsafed `eval` function
- * Referred from:
- *     https://github.com/atom/loophole/blob/master/src/loophole.coffee
- * @param fn
- */
-export function allowUnsafeEval(fn) {
-  const previousEval = global.eval;
+let originalEval = global.eval;
+let originalFunction = global.Function;
+let numberOfActiveOverrides = 0;
+
+export function allowUnsafe(fn) {
+  if (numberOfActiveOverrides === 0) {
+    originalEval = global.eval;
+    originalFunction = global.Function;
+  }
   try {
+    numberOfActiveOverrides += 1;
     global.eval = (source) => {
       vm.runInThisContext(source);
     };
     return fn();
   } finally {
-    global.eval = previousEval;
+    numberOfActiveOverrides -= 1;
+    if (numberOfActiveOverrides === 0) {
+      global.eval = originalEval;
+      global.Function = originalFunction;
+    }
   }
 }
 
-export async function allowUnsafeEvalAync(fn: () => Promise<any>) {
-  const previousEval = global.eval;
-  try {
-    global.eval = (source) => {
-      vm.runInThisContext(source);
-    };
-    return await fn();
-  } finally {
-    global.eval = previousEval;
+export async function allowUnsafeAsync(fn: () => Promise<any>) {
+  if (numberOfActiveOverrides === 0) {
+    originalEval = global.eval;
+    originalFunction = global.Function;
   }
-}
-
-export function allowUnsafeNewFunction(fn) {
-  const previousFunction = global.Function;
   try {
-    global.Function = Function as FunctionConstructor;
-    return fn();
-  } finally {
-    global.Function = previousFunction;
-  }
-}
-
-export async function allowUnsafeNewFunctionAsync(fn: () => Promise<any>) {
-  const previousFunction = global.Function;
-  try {
-    global.Function = Function as FunctionConstructor;
-    return await fn();
-  } finally {
-    global.Function = previousFunction;
-  }
-}
-
-export async function allowUnsafeEvalAndUnsafeNewFunctionAsync(
-  fn: () => Promise<any>,
-) {
-  const previousFunction = global.Function;
-  const previousEval = global.eval;
-  try {
+    numberOfActiveOverrides += 1;
     global.Function = Function as FunctionConstructor;
     global.eval = (source) => {
       vm.runInThisContext(source);
     };
     return await fn();
   } finally {
-    global.eval = previousEval;
-    global.Function = previousFunction;
+    numberOfActiveOverrides -= 1;
+    if (numberOfActiveOverrides === 0) {
+      global.eval = originalEval;
+      global.Function = originalFunction;
+    }
   }
 }
 
 export const loadDependency = (dependencyPath: string) =>
-  allowUnsafeEval(() =>
-    allowUnsafeNewFunction(() =>
-      require(path.resolve(
-        extensionDirectoryPath,
-        "dependencies",
-        dependencyPath,
-      )),
-    ),
+  allowUnsafe(() =>
+    require(path.resolve(
+      extensionDirectoryPath,
+      "dependencies",
+      dependencyPath,
+    )),
   );
 
 export const extractCommandFromBlockInfo = (info: BlockInfo) =>

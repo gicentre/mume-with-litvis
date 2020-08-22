@@ -21,9 +21,7 @@ export async function toSVG(spec: string = "", baseURL: string = "") {
     d = JSON.parse(spec);
   }
 
-  return utility.allowUnsafeEval(() => {
-    return utility.allowUnsafeNewFunction(() => {
-      return vega.toSVG(JSON.stringify(vl.compile(d).spec), baseURL);
-    });
-  });
+  return utility.allowUnsafe(() =>
+    vega.toSVG(JSON.stringify(vl.compile(d).spec), baseURL),
+  );
 }

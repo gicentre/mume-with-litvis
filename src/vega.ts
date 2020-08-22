@@ -22,7 +22,7 @@ async function renderVega(spec: object, baseURL): Promise<string> {
     return svgHeader + (await view.toSVG());
   }
 
-  return await utility.allowUnsafeEvalAndUnsafeNewFunctionAsync(helper);
+  return await utility.allowUnsafeAsync(helper);
 }
 
 /**
