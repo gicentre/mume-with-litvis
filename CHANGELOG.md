@@ -1,5 +1,4 @@
-This changelog is for the fork.
-See [`CHANGELOG-UPSTREAM.md`](CHANGELOG-UPSTREAM.md) of the changelog related to the [original mume library](https://github.com/shd101wyy/mume/).
+This changelog is for the fork, not the [original mume library](https://github.com/shd101wyy/mume/).
 
 ## 0.26.0
 

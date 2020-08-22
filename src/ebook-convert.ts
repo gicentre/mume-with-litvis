@@ -1,4 +1,4 @@
-import mkdirp from "mkdirp";
+import * as mkdirp from "mkdirp";
 import * as path from "path";
 import { execFile } from "child_process";
 // ebook-convert is requied (calibre), which can be got from https://calibre-ebook.com/download

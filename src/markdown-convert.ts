@@ -3,7 +3,7 @@
  */
 
 import * as fs from "fs";
-import mkdirp from "mkdirp";
+import * as mkdirp from "mkdirp";
 import * as path from "path";
 import { CodeChunkData } from "./code-chunk-data";
 import computeChecksum from "./lib/compute-checksum";
