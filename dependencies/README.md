@@ -4,7 +4,7 @@ I managed many libraries by myself instead of through npm to reduce overall file
 
 ```json
 {
-  "apache-arrow": "0.16.0",
+  "apache-arrow": "0.17.0",
   "mermaid": "8.5.2",
   "plantuml": "mit-1.2020.10",
   "wavedrom": "2.3.0",
@@ -18,9 +18,9 @@ I managed many libraries by myself instead of through npm to reduce overall file
   "katex": "v0.11.1",
   "crypto-js": "3.9.1-1",
   "jquery-modal": "0.8.0",
-  "vega": "5.10.1",
-  "vega-lite": "4.10.2",
-  "vega-embed": "6.5.2",
+  "vega": "5.14.0",
+  "vega-lite": "4.14.1",
+  "vega-embed": "6.11.1",
   "vega-loader-arrow": "0.0.7",
   "ditaa": "0.11",
   "font-awesome": "4.7",

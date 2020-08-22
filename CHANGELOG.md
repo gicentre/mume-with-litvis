@@ -1,5 +1,10 @@
 This changelog is for the fork, not the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.27.0
+
+- Sync fork with the upstream `mume` library
+- Upgrade vega to 5.14.0 and vega-embed to 6.11.1, fix CDN vega versions
+
 ## 0.26.0
 
 - Upgrade vega-lite to 4.14.1 and vega-embed to 6.10.0
