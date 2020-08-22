@@ -514,7 +514,7 @@ let originalEval = global.eval;
 let originalFunction = global.Function;
 let numberOfActiveOverrides = 0;
 
-export function allowUnsafe(fn) {
+export function allowUnsafe<T>(fn: () => T): T {
   if (numberOfActiveOverrides === 0) {
     originalEval = global.eval;
     originalFunction = global.Function;
@@ -525,27 +525,6 @@ export function allowUnsafe(fn) {
       vm.runInThisContext(source);
     };
     return fn();
-  } finally {
-    numberOfActiveOverrides -= 1;
-    if (numberOfActiveOverrides === 0) {
-      global.eval = originalEval;
-      global.Function = originalFunction;
-    }
-  }
-}
-
-export async function allowUnsafeAsync(fn: () => Promise<any>) {
-  if (numberOfActiveOverrides === 0) {
-    originalEval = global.eval;
-    originalFunction = global.Function;
-  }
-  try {
-    numberOfActiveOverrides += 1;
-    global.Function = Function as FunctionConstructor;
-    global.eval = (source) => {
-      vm.runInThisContext(source);
-    };
-    return await fn();
   } finally {
     numberOfActiveOverrides -= 1;
     if (numberOfActiveOverrides === 0) {
