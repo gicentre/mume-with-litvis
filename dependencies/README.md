@@ -5,9 +5,9 @@ I managed many libraries by myself instead of through npm to reduce overall file
 ```json
 {
   "apache-arrow": "0.16.0",
-  "mermaid": "8.4.0",
-  "plantuml": "mit-1.2019.11",
-  "wavedrom": "1.4.1",
+  "mermaid": "8.5.2",
+  "plantuml": "mit-1.2020.10",
+  "wavedrom": "2.3.0",
   "reveal": "3.7.0",
   "viz": "v2.0.0",
   "MathJax": "v2.7.5",
@@ -22,7 +22,7 @@ I managed many libraries by myself instead of through npm to reduce overall file
   "vega-lite": "4.10.2",
   "vega-embed": "6.5.2",
   "vega-loader-arrow": "0.0.7",
-  "ditaa": "0.10",
+  "ditaa": "0.11",
   "font-awesome": "4.7",
   "flowchart": "1.11.3",
   "raphael.js": "2.2.7",

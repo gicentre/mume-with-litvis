@@ -1,9 +1,7 @@
 import { spawn } from "child_process";
 import * as path from "path";
-import {
-  extensionConfigDirectoryPath,
-  extensionDirectoryPath,
-} from "./utility";
+import { extensionDirectoryPath } from "./utility";
+import { getExtensionConfigPath } from "./mume";
 
 const PlantUMLJarPath = path.resolve(
   extensionDirectoryPath,
@@ -23,12 +21,12 @@ const CHUNKS: { [key: string]: string } = {};
 /**
  * key is fileDirectoryPath, value is Array
  */
-const CALLBACKS: { [key: string]: Array<(result: string) => void> } = {};
+const CALLBACKS: { [key: string]: ((result: string) => void)[] } = {};
 
 class PlantUMLTask {
   private fileDirectoryPath: string;
   private chunks: string;
-  private callbacks: Array<(result: string) => void>;
+  private callbacks: ((result: string) => void)[];
   private task;
 
   constructor(fileDirectoryPath: string) {
@@ -50,10 +48,9 @@ class PlantUMLTask {
   private startTask() {
     this.task = spawn("java", [
       "-Djava.awt.headless=true",
+      "-Dfile.encoding=UTF-8",
       "-Dplantuml.include.path=" +
-        [this.fileDirectoryPath, extensionConfigDirectoryPath].join(
-          path.delimiter,
-        ),
+        [this.fileDirectoryPath, getExtensionConfigPath()].join(path.delimiter),
       "-jar",
       PlantUMLJarPath,
       // '-graphvizdot', 'exe'

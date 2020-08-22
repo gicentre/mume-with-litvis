@@ -5,7 +5,7 @@ import {
   stringify as stringifyAttributes,
 } from "block-attributes";
 import * as fs from "fs";
-import { render as renderLess } from "less";
+import * as less from "less";
 import * as path from "path";
 import * as request from "request";
 import * as temp from "temp";
@@ -65,6 +65,8 @@ export interface TransformMarkdownOptions {
   imageDirectoryPath?: string;
   usePandocParser: boolean;
   headingIdGenerator?: HeadingIdGenerator;
+  onWillTransformMarkdown?: (markdown: string) => Promise<string>;
+  onDidTransformMarkdown?: (markdown: string) => Promise<string>;
 }
 
 const fileExtensionToLanguageMap = {
@@ -182,13 +184,17 @@ async function loadFile(
     // less file
     const data = await utility.readFile(filePath, { encoding: "utf-8" });
     return await new Promise<string>((resolve, reject) => {
-      renderLess(data, { paths: [path.dirname(filePath)] }, (error, output) => {
-        if (error) {
-          return reject(error);
-        } else {
-          return resolve(output.css || "");
-        }
-      });
+      less.render(
+        data,
+        { paths: [path.dirname(filePath)] },
+        (error, output) => {
+          if (error) {
+            return reject(error);
+          } else {
+            return resolve(output.css || "");
+          }
+        },
+      );
     });
   } else if (filePath.endsWith(".pdf")) {
     // pdf file
@@ -252,6 +258,8 @@ export async function transformMarkdown(
     imageDirectoryPath = "",
     usePandocParser = false,
     headingIdGenerator = new HeadingIdGenerator(),
+    onWillTransformMarkdown = null,
+    onDidTransformMarkdown = null,
   }: TransformMarkdownOptions,
 ): Promise<TransformMarkdownOutput> {
   let lastOpeningCodeBlockFence: string = null;
@@ -787,6 +795,9 @@ export async function transformMarkdown(
                 config,
               )}  \n${fileContent}\n\`\`\`  `;
             } else if ([".md", ".markdown", ".mmark"].indexOf(extname) >= 0) {
+              if (onWillTransformMarkdown) {
+                fileContent = await onWillTransformMarkdown(fileContent);
+              }
               // markdown files
               // this return here is necessary
               let output2;
@@ -807,6 +818,11 @@ export async function transformMarkdown(
                 usePandocParser,
                 headingIdGenerator,
               }));
+
+              if (onDidTransformMarkdown) {
+                output2 = await onDidTransformMarkdown(output2);
+              }
+
               output2 = "\n" + output2 + "  ";
               headings = headings.concat(headings2);
 

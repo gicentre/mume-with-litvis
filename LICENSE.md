@@ -1,10 +1,12 @@
-# litvis
+# License
 
-_contributions by https://github.com/orgs/gicentre/people_
+## litvis
+
+_contributions by <https://github.com/orgs/gicentre/people>_
 
 BSD 3-Clause License
 
-```
+```txt
 Copyright (c) 2017-present, giCentre, City University London
 All rights reserved.
 ```
@@ -34,14 +36,14 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# original markdown-preview-enhanced
+## original markdown-preview-enhanced
 
-_https://github.com/shd101wyy/markdown-preview-enhanced_
+_<https://github.com/shd101wyy/markdown-preview-enhanced>_
 
 University of Illinois/NCSA
 Open Source License
 
-```
+```txt
 Copyright (c) 2017  Yiyi Wang
 All rights reserved.
 
