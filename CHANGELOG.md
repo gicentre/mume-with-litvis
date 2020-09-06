@@ -1,5 +1,10 @@
 This changelog is for the fork, not the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.28.0
+
+- Upgrade vega to 5.15.0 and vega-lite to 4.15.0
+- Bump dependencies
+
 ## 0.27.0
 
 - Sync fork with the upstream `mume` library
