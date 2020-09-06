@@ -1,4 +1,4 @@
-import { stringify as stringifyAttributes } from "block-attributes";
+import { stringifyBlockAttributes } from "block-attributes";
 import { BlockInfo } from "block-info";
 import { MathRenderingOption } from "../markdown-engine-config";
 import parseMath from "../parse-math";
@@ -74,7 +74,7 @@ const renderMath = (
       closeTag: mathBlockDelimiters.length ? mathBlockDelimiters[0][1] : "",
       renderingOption,
     });
-    $output = `<p ${stringifyAttributes(
+    $output = `<p ${stringifyBlockAttributes(
       normalizedInfo.attributes,
     )}>${mathHtml}</p>`;
   } catch (error) {

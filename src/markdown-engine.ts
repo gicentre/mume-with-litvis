@@ -1,12 +1,9 @@
 // tslint:disable no-var-requires member-ordering
 import {
-  parse as parseAttributes,
-  stringify as stringifyAttributes,
+  parseBlockAttributes,
+  stringifyBlockAttributes,
 } from "block-attributes";
-import {
-  normalize as normalizeBlockInfo,
-  parse as parseBlockInfo,
-} from "block-info";
+import { normalizeBlockInfo, parseBlockInfo } from "block-info";
 import * as cheerio from "cheerio";
 import { execFile } from "child_process";
 import * as fs from "fs";
@@ -21,7 +18,7 @@ import {
 import * as os from "os";
 import * as path from "path";
 import * as request from "request";
-import * as slash from "slash";
+import slash = require("slash");
 import * as toVFile from "to-vfile";
 import { VFile } from "vfile";
 import * as YAML from "yamljs";
@@ -2651,7 +2648,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
         );
       }
 
-      const attrString = stringifyAttributes(slideConfig, false); // parseAttrString(slideConfig)
+      const attrString = stringifyBlockAttributes(slideConfig, false); // parseAttrString(slideConfig)
       const classString = slideConfig["class"] || "";
       const idString = slideConfig["id"] ? `id="${slideConfig["id"]}"` : "";
 
@@ -2691,7 +2688,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       const attributeMatch = html2.match(/<!--(.+?)-->/);
       if (attributeMatch) {
         const attributes = attributeMatch[1].replace(/\.element\:/, "").trim();
-        const attrObj = parseAttributes(attributes);
+        const attrObj = parseBlockAttributes(attributes);
         for (const key in attrObj) {
           if (attrObj.hasOwnProperty(key)) {
             $elem.attr(key, attrObj[key]);
