@@ -4,9 +4,9 @@ I managed many libraries by myself instead of through npm to reduce overall file
 
 ```json
 {
-  "apache-arrow": "0.17.0",
-  "mermaid": "8.5.2",
-  "plantuml": "mit-1.2020.10",
+  "apache-arrow": "2.0.0",
+  "mermaid": "8.8.4",
+  "plantuml": "1.2020.26",
   "wavedrom": "2.3.0",
   "reveal": "3.7.0",
   "viz": "v2.0.0",
@@ -15,13 +15,13 @@ I managed many libraries by myself instead of through npm to reduce overall file
   "jquery-contextmenu": "2.6.3",
   "markdown-it": "8.4.2",
   "JavaScript-MD5": "2.7.0",
-  "katex": "v0.11.1",
+  "katex": "v0.12.0",
   "crypto-js": "3.9.1-1",
   "jquery-modal": "0.8.0",
-  "vega": "5.17.0",
+  "vega": "5.18.0",
   "vega-lite": "4.17.0",
-  "vega-embed": "6.12.2",
-  "vega-loader-arrow": "0.0.7",
+  "vega-embed": "6.15.0",
+  "vega-loader-arrow": "0.0.9",
   "ditaa": "0.11",
   "font-awesome": "4.7",
   "flowchart": "1.11.3",
@@ -30,7 +30,7 @@ I managed many libraries by myself instead of through npm to reduce overall file
   "webfont": "1.6.28",
   // "snap.svg": "0.5.1", // <= Doesn't work well in Preview. Use raphael.js instead
   "underscore": "1.8.3",
-  "prism": "1.15.0"
+  "prism": "1.22.0"
 }
 ```
 
