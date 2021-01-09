@@ -1242,17 +1242,6 @@ character-reference-invalid@^1.0.0:
   resolved "https://registry.yarnpkg.com/character-reference-invalid/-/character-reference-invalid-1.1.4.tgz#083329cda0eae272ab3dbbf37e9a382c13af1560"
   integrity sha512-mKKUkUbhPpQlCOfIuZkvSEgktjPFIsZKRRbC6KWVEMvlzblj3i3asQv5ODsrwt0N3pHAEvjP8KTQPHkp0+6jOg==
 
-cheerio-select-tmp@^0.1.0:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/cheerio-select-tmp/-/cheerio-select-tmp-0.1.1.tgz#55bbef02a4771710195ad736d5e346763ca4e646"
-  integrity sha512-YYs5JvbpU19VYJyj+F7oYrIE2BOll1/hRU7rEy/5+v9BzkSo3bK81iAeeQEMI92vRIxz677m72UmJUiVwwgjfQ==
-  dependencies:
-    css-select "^3.1.2"
-    css-what "^4.0.0"
-    domelementtype "^2.1.0"
-    domhandler "^4.0.0"
-    domutils "^2.4.4"
-
 cheerio@1.0.0-rc.3:
   version "1.0.0-rc.3"
   resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-1.0.0-rc.3.tgz#094636d425b2e9c0f4eb91a46c05630c9a1a8bf6"
@@ -1264,19 +1253,6 @@ cheerio@1.0.0-rc.3:
     htmlparser2 "^3.9.1"
     lodash "^4.15.0"
     parse5 "^3.0.1"
-
-cheerio@^1.0.0-rc.3:
-  version "1.0.0-rc.5"
-  resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-1.0.0-rc.5.tgz#88907e1828674e8f9fee375188b27dadd4f0fa2f"
-  integrity sha512-yoqps/VCaZgN4pfXtenwHROTp8NG6/Hlt4Jpz2FEP0ZJQ+ZUkVDd0hAPDNKhj3nakpfPt/CNs57yEtxD1bXQiw==
-  dependencies:
-    cheerio-select-tmp "^0.1.0"
-    dom-serializer "~1.2.0"
-    domhandler "^4.0.0"
-    entities "~2.1.0"
-    htmlparser2 "^6.0.0"
-    parse5 "^6.0.0"
-    parse5-htmlparser2-tree-adapter "^6.0.0"
 
 chrome-location@^1.2.1:
   version "1.2.1"
@@ -1520,17 +1496,6 @@ cross-spawn@^7.0.0:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-css-select@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/css-select/-/css-select-3.1.2.tgz#d52cbdc6fee379fba97fb0d3925abbd18af2d9d8"
-  integrity sha512-qmss1EihSuBNWNNhHjxzxSfJoFBM/lERB/Q4EnsJQQC62R2evJDW481091oAdOr9uh46/0n4nrg0It5cAnj1RA==
-  dependencies:
-    boolbase "^1.0.0"
-    css-what "^4.0.0"
-    domhandler "^4.0.0"
-    domutils "^2.4.3"
-    nth-check "^2.0.0"
-
 css-select@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/css-select/-/css-select-1.2.0.tgz#2b3a110539c5355f1cd8d314623e870b121ec858"
@@ -1550,11 +1515,6 @@ css-what@2.1:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/css-what/-/css-what-2.1.3.tgz#a6d7604573365fe74686c3f311c56513d88285f2"
   integrity sha512-a+EPoD+uZiNfh+5fxw2nO9QwFa6nJe2Or35fGY6Ipw1R3R4AGz1d1TEZrCegvw2YTmZ0jXirGYlzxxpYSHwpEg==
-
-css-what@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/css-what/-/css-what-4.0.0.tgz#35e73761cab2eeb3d3661126b23d7aa0e8432233"
-  integrity sha512-teijzG7kwYfNVsUh2H/YN62xW3KK9YhXEgSlbxMlcyjPNvdKJqFx5lrwlJgoFP1ZHlB89iGDlo/JyshKeRhv5A==
 
 cssom@^0.4.4:
   version "0.4.4"
@@ -1790,15 +1750,6 @@ dom-serializer@0:
     domelementtype "^2.0.1"
     entities "^2.0.0"
 
-dom-serializer@^1.0.1, dom-serializer@~1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/dom-serializer/-/dom-serializer-1.2.0.tgz#3433d9136aeb3c627981daa385fc7f32d27c48f1"
-  integrity sha512-n6kZFH/KlCrqs/1GHMOd5i2fd/beQHuehKdWvNNffbGHTr/almdhuVvTVFb3V7fglz+nC50fFusu3lY33h12pA==
-  dependencies:
-    domelementtype "^2.0.1"
-    domhandler "^4.0.0"
-    entities "^2.0.0"
-
 dom-serializer@~0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/dom-serializer/-/dom-serializer-0.1.1.tgz#1ec4059e284babed36eec2941d4a970a189ce7c0"
@@ -1812,7 +1763,7 @@ domelementtype@1, domelementtype@^1.3.0, domelementtype@^1.3.1:
   resolved "https://registry.yarnpkg.com/domelementtype/-/domelementtype-1.3.1.tgz#d048c44b37b0d10a7f2a3d5fee3f4333d790481f"
   integrity sha512-BSKB+TSpMpFI/HOxCNr1O8aMOTZ8hT3pM3GQ0w/mWRmkhEDSFJkkyzz4XQsBV44BChwGkrDfMyjVD0eA2aFV3w==
 
-domelementtype@^2.0.1, domelementtype@^2.1.0:
+domelementtype@^2.0.1:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/domelementtype/-/domelementtype-2.1.0.tgz#a851c080a6d1c3d94344aed151d99f669edf585e"
   integrity sha512-LsTgx/L5VpD+Q8lmsXSHW2WpA+eBlZ9HPf3erD1IoPF00/3JKHZ3BknUVA2QGDNu69ZNmyFmCWBSO45XjYKC5w==
@@ -1831,13 +1782,6 @@ domhandler@^2.3.0:
   dependencies:
     domelementtype "1"
 
-domhandler@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/domhandler/-/domhandler-4.0.0.tgz#01ea7821de996d85f69029e81fa873c21833098e"
-  integrity sha512-KPTbnGQ1JeEMQyO1iYXoagsI6so/C96HZiFyByU3T6iAzpXn8EGEvct6unm1ZGoed8ByO2oirxgwxBmqKF9haA==
-  dependencies:
-    domelementtype "^2.1.0"
-
 domutils@1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.5.1.tgz#dcd8488a26f563d61079e48c9f7b7e32373682cf"
@@ -1853,15 +1797,6 @@ domutils@^1.5.1:
   dependencies:
     dom-serializer "0"
     domelementtype "1"
-
-domutils@^2.4.3, domutils@^2.4.4:
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/domutils/-/domutils-2.4.4.tgz#282739c4b150d022d34699797369aad8d19bbbd3"
-  integrity sha512-jBC0vOsECI4OMdD0GC9mGn7NXPLb+Qt6KW1YDQzeQYRUFKmNG8lh7mO5HiELfr+lLQE7loDVI4QcAxV80HS+RA==
-  dependencies:
-    dom-serializer "^1.0.1"
-    domelementtype "^2.0.1"
-    domhandler "^4.0.0"
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
@@ -1917,7 +1852,7 @@ entities@^1.1.1, entities@~1.1.1:
   resolved "https://registry.yarnpkg.com/entities/-/entities-1.1.2.tgz#bdfa735299664dfafd34529ed4f8522a275fea56"
   integrity sha512-f2LZMYl1Fzu7YSBKg+RoROelpOaNrcGmE9AZubeDfrCEia483oW4MI4VyFd5VNHIgQ/7qm1I0wUHK1eJnn2y2w==
 
-entities@^2.0.0, entities@~2.1.0:
+entities@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/entities/-/entities-2.1.0.tgz#992d3129cf7df6870b96c57858c249a120f8b8b5"
   integrity sha512-hCx1oky9PFrJ611mf0ifBLBRW8lUUVRlFolb5gWRfIELabBlbp9xZvrqZLZAs+NxFnbfQoeGd8wDkygjg7U85w==
@@ -2570,16 +2505,6 @@ htmlparser2@^3.9.1:
     entities "^1.1.1"
     inherits "^2.0.1"
     readable-stream "^3.1.1"
-
-htmlparser2@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/htmlparser2/-/htmlparser2-6.0.0.tgz#c2da005030390908ca4c91e5629e418e0665ac01"
-  integrity sha512-numTQtDZMoh78zJpaNdJ9MXb2cv5G3jwUoe3dMQODubZvLoGvTE/Ofp6sHvH8OGKcN/8A47pGLi/k58xHP/Tfw==
-  dependencies:
-    domelementtype "^2.0.1"
-    domhandler "^4.0.0"
-    domutils "^2.4.4"
-    entities "^2.0.0"
 
 http-errors@1.7.3:
   version "1.7.3"
@@ -3639,32 +3564,32 @@ literate-elm@^0.8.1:
     object-hash "^2.0.3"
     sleep-promise "^8.0.1"
 
-litvis-integration-mume@^0.9.1:
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/litvis-integration-mume/-/litvis-integration-mume-0.9.1.tgz#15d6ff782af3c77891efb786becf3def47183b9d"
-  integrity sha512-J6gQEnIovMjL7TWCJ149ifG0x5OnI6IF9Fr+F3i9ckv/+NPkq51a8IFEFpwMAgnw0rLJb7glDVYboAS3+qBo1g==
+litvis-integration-mume@0.9.3:
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/litvis-integration-mume/-/litvis-integration-mume-0.9.3.tgz#e919009a62d9e68a26e6dd321410ef65ebab9073"
+  integrity sha512-+37+txIqobq6isKbe6RHPxrRehmmXc2F+9yfUOygML2s36zHzmtGXd7sjYbJInfsSco7vniCN2KytTAD/Ukcmg==
   dependencies:
     block-attributes "^0.4.0"
     block-info "^0.4.0"
-    cheerio "^1.0.0-rc.3"
+    cheerio "1.0.0-rc.3"
     elm-string-representation "^1.2.1"
     html-entities "^1.3.1"
-    litvis "^0.9.1"
+    litvis "^0.9.3"
     lodash "^4.17.20"
     lru-cache "^6.0.0"
-    narrative-schema "^0.4.1"
+    narrative-schema "^0.4.2"
     narrative-schema-common "^0.2.1"
-    narrative-schema-label "^0.4.1"
-    narrative-schema-styling "^0.2.1"
+    narrative-schema-label "^0.4.2"
+    narrative-schema-styling "^0.2.2"
     object-hash "^2.0.3"
     unist-util-select "^3.0.1"
     vfile "^4.2.0"
     yamljs "^0.3.0"
 
-litvis@^0.9.1:
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/litvis/-/litvis-0.9.1.tgz#b92b55088381d3c379b40a0d655d7058cc64c918"
-  integrity sha512-hdrIAd2DtT8pnjqaJQ9iRPslogFTpKPdC3xrjGXEbDU8pg9m3adKO5YAdXeMFBne/pzsmqTrMWFHS4WKUxFGew==
+litvis@^0.9.3:
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/litvis/-/litvis-0.9.3.tgz#21fa3ef31da68ccd09118e68f30fa6e765b21d5c"
+  integrity sha512-UAdiCwBp2MgSWggvIUSliyGJkNFYyfPWr7qbjNMMLWnP2GKUGW+Efarn2KxxbY1bcViJdzPUkXFA3ZE4u1w4vA==
   dependencies:
     block-attributes "^0.4.0"
     block-info "^0.4.0"
@@ -3675,8 +3600,8 @@ litvis@^0.9.1:
     kind-of "^6.0.3"
     literate-elm "^0.8.1"
     lodash "^4.17.20"
-    narrative-schema "^0.4.1"
-    narrative-schema-label "^0.4.1"
+    narrative-schema "^0.4.2"
+    narrative-schema-label "^0.4.2"
     remark-frontmatter "^2.0.0"
     remark-parse "^8.0.3"
     temp-dir "^2.0.0"
@@ -3961,14 +3886,14 @@ narrative-schema-common@^0.2.1:
     kind-of "^6.0.3"
     vfile "^4.2.0"
 
-narrative-schema-label@^0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/narrative-schema-label/-/narrative-schema-label-0.4.1.tgz#c3fd9c9bb068a3e22ee53b02a47db059a408cb45"
-  integrity sha512-BrkCDoXgJeFbNiezIoNqq+7VJM1FKL5Lah5UAIB9QLUoieAP0HKRKpU4SLU1Ri3LIKk3DwO6XGiph4hvdlHajw==
+narrative-schema-label@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/narrative-schema-label/-/narrative-schema-label-0.4.2.tgz#e609492309f0d2d9328577fc4295dfc1735f0eb0"
+  integrity sha512-5IuSMmnfNes4rPpeIM35MKnVR8H1ozxW8m0tvW31zjTQHa0h6KuRSloRcxWZtXKDFQlAZ/0l/lCjbGVhTfGl0g==
   dependencies:
     block-attributes "^0.4.0"
     block-info "^0.4.0"
-    cheerio "^1.0.0-rc.3"
+    cheerio "1.0.0-rc.3"
     data-with-position "^0.4.1"
     handlebars "^4.7.6"
     html-entities "^1.3.1"
@@ -3980,31 +3905,31 @@ narrative-schema-label@^0.4.1:
     unist-util-visit-parents "^3.1.0"
     vfile "^4.2.0"
 
-narrative-schema-rule@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/narrative-schema-rule/-/narrative-schema-rule-0.2.1.tgz#cbcc9850500080d6995d7567ca239d0d3e9ccfc4"
-  integrity sha512-MUB6SlLk22WhXqK59+sweQbNXCfkcfh+lnGRyM5ovDS+UhIzaAopOcrrfvlV23EncNyRf6wPYmGesR3onTgGGA==
+narrative-schema-rule@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/narrative-schema-rule/-/narrative-schema-rule-0.2.2.tgz#5f9c5167eed43a2e89d3967a14193f67a2b68bc2"
+  integrity sha512-scDlvecbZhP/kVRGmfLvEhJPvvvfESiN8GXNJztLw11IhgWMLNm9JnSKMkmCrdb6DjMMu/s3HVA8/4NjkbnG7Q==
   dependencies:
     block-attributes "^0.4.0"
     block-info "^0.4.0"
-    cheerio "^1.0.0-rc.3"
+    cheerio "1.0.0-rc.3"
     data-with-position "^0.4.1"
     handlebars "^4.7.6"
     html-entities "^1.3.1"
     lodash "^4.17.20"
     narrative-schema-common "^0.2.1"
-    narrative-schema-label "^0.4.1"
+    narrative-schema-label "^0.4.2"
     unist-util-visit "^2.0.3"
     vfile "^4.2.0"
 
-narrative-schema-styling@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/narrative-schema-styling/-/narrative-schema-styling-0.2.1.tgz#55737f33dc15d931ed464f22673334a32129505d"
-  integrity sha512-GpFvvjW5dgpqHvwrx9emSETf25jKmGfzMhmCMiuJIGf6rlETA/9znmbaytnIzw1VIYchaE+MvWPI8bfL6FXSgQ==
+narrative-schema-styling@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/narrative-schema-styling/-/narrative-schema-styling-0.2.2.tgz#beb92447ef38be622852aa33563a9b55d3b66a4a"
+  integrity sha512-VqgFtA1viRuwlEY+1UyOdTjdKVeIOcncZ0/sq3tbnfBX6Tv07rU/QwGGrqWLT/cjpWyDFWJMVtOwQ8L1HBjQrg==
   dependencies:
     block-attributes "^0.4.0"
     block-info "^0.4.0"
-    cheerio "^1.0.0-rc.3"
+    cheerio "1.0.0-rc.3"
     data-with-position "^0.4.1"
     handlebars "^4.7.6"
     html-entities "^1.3.1"
@@ -4013,18 +3938,18 @@ narrative-schema-styling@^0.2.1:
     unist-util-visit "^2.0.3"
     vfile "^4.2.0"
 
-narrative-schema@^0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/narrative-schema/-/narrative-schema-0.4.1.tgz#8db88efe832eed9d8c0aa5a21dad2ce9374db918"
-  integrity sha512-ze1009CvwzOtIIPQVgmFAKXgurPrsBbWE2gHpQYn0JEYUhJyWPptQ+1tKqFKU/iQ6nUphl32NU+fEOXvIuWWnw==
+narrative-schema@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/narrative-schema/-/narrative-schema-0.4.2.tgz#5e5cbd7f6a49b11926067f8370387a5c1bef9227"
+  integrity sha512-+jiJoNQezwvemTFnbohTKISNa3rfQYHxnfvWi2oRN1XkOicBTeaeNL1BpqMvQ8OvO7KF13c7/ZDEtEbWrTRzeg==
   dependencies:
     data-with-position "^0.4.1"
     jsonschema "^1.2.6"
     lodash "^4.17.20"
     narrative-schema-common "^0.2.1"
-    narrative-schema-label "^0.4.1"
-    narrative-schema-rule "^0.2.1"
-    narrative-schema-styling "^0.2.1"
+    narrative-schema-label "^0.4.2"
+    narrative-schema-rule "^0.2.2"
+    narrative-schema-styling "^0.2.2"
     pseudo-yaml-ast "^1.0.10"
     to-vfile "^6.1.0"
     vfile "^4.2.0"
@@ -4346,13 +4271,6 @@ parse-json@^5.0.0:
     json-parse-even-better-errors "^2.3.0"
     lines-and-columns "^1.1.6"
 
-parse5-htmlparser2-tree-adapter@^6.0.0:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/parse5-htmlparser2-tree-adapter/-/parse5-htmlparser2-tree-adapter-6.0.1.tgz#2cdf9ad823321140370d4dbf5d3e92c7c8ddc6e6"
-  integrity sha512-qPuWvbLgvDGilKc5BoicRovlT4MtYT6JfJyBOMDsKoiT+GiuP5qyrPCnR9HcPECIJJmZh5jRndyNThnhhb/vlA==
-  dependencies:
-    parse5 "^6.0.1"
-
 parse5@5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/parse5/-/parse5-5.1.1.tgz#f68e4e5ba1852ac2cadc00f4555fff6c2abb6178"
@@ -4364,11 +4282,6 @@ parse5@^3.0.1:
   integrity sha512-rgO9Zg5LLLkfJF9E6CCmXlSE4UVceloys8JrFqCcHloC3usd/kJCyPDwH2SOlzix2j3xaP9sUX3e8+kvkuleAA==
   dependencies:
     "@types/node" "*"
-
-parse5@^6.0.0, parse5@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/parse5/-/parse5-6.0.1.tgz#e1a1c085c569b3dc08321184f19a39cc27f7c30b"
-  integrity sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw==
 
 pascalcase@^0.1.1:
   version "0.1.1"
