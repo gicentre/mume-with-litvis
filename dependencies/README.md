@@ -18,7 +18,7 @@ I managed many libraries by myself instead of through npm to reduce overall file
   "katex": "v0.12.0",
   "crypto-js": "3.9.1-1",
   "jquery-modal": "0.8.0",
-  "vega": "5.18.0",
+  "vega": "5.19.1",
   "vega-lite": "4.17.0",
   "vega-embed": "6.15.0",
   "vega-loader-arrow": "0.0.9",

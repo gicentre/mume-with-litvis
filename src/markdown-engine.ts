@@ -136,7 +136,7 @@ let MODIFY_SOURCE: (
 const dependentLibraryMaterials = [
   {
     key: "vega",
-    version: "5.18.0",
+    version: "5.19.1",
   },
   {
     key: "vega-lite",
