@@ -1,6 +1,6 @@
 This changelog is for the fork, not the [original mume library](https://github.com/shd101wyy/mume/).
 
-## Unreleased (patch)
+## 0.32.1
 
 - Fix vega-lite integration
 
