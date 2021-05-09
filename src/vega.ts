@@ -1,7 +1,10 @@
-import { loader } from "vega-loader";
+import { loader, formats } from "vega-loader";
+import * as vega from "vega";
+import arrow from "vega-loader-arrow";
 import * as YAML from "yamljs";
 import * as utility from "./utility";
-let vega = null;
+
+formats("arrow", arrow);
 
 async function renderVega(spec: object, baseURL): Promise<string> {
   const svgHeader =
@@ -32,14 +35,6 @@ export async function toSVG(
   spec: string = "",
   baseURL: string = "",
 ): Promise<string> {
-  if (!vega) {
-    vega = utility.loadDependency("vega/vega.min.js");
-    const arrow = utility.loadDependency(
-      "vega-loader-arrow/vega-loader-arrow.min.js",
-    );
-    vega.formats("arrow", arrow);
-  }
-
   spec = spec.trim();
   let d;
   if (spec[0] !== "{") {

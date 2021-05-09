@@ -649,11 +649,12 @@ if (typeof(window['Reveal']) !== 'undefined') {
       </script>`;
     }
 
-    dependentLibraryMaterials.forEach(({ key }) => {
+    dependentLibraryMaterials.forEach(({ key, buildPath }) => {
+      const resolvedBuildPath = buildPath || `build/${key}.js`;
       scripts += `<script src="${utility.addFileProtocol(
         path.resolve(
           utility.extensionDirectoryPath,
-          `./dependencies/${key}/${key}.min.js`,
+          `./node_modules/${key}/${resolvedBuildPath}`,
         ),
         vscodePreviewPanel,
       )}" charset="UTF-8"></script>`;
@@ -1246,13 +1247,13 @@ if (typeof(window['Reveal']) !== 'undefined') {
       html.indexOf(' class="vega-lite') >= 0
     ) {
       dependentLibraryMaterials.forEach(({ key, version, buildPath }) => {
+        const resolvedBuildPath = buildPath || `build/${key}.js`;
         vegaScript += options.offline
           ? `<script type="text/javascript" src="file:///${path.resolve(
               utility.extensionDirectoryPath,
-              `./dependencies/${key}/${key}.min.js`,
+              `./node_modules/${key}/${resolvedBuildPath}`,
             )}" charset="UTF-8"></script>`
-          : `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/${key}@${version}/${buildPath ||
-              `build/${key}.js`}"></script>`;
+          : `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/${key}@${version}/${resolvedBuildPath}"></script>`;
       });
       vegaInitScript += `<script>
       var vegaEls = document.querySelectorAll('.vega, .vega-lite');

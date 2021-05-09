@@ -46,7 +46,7 @@
     ]
   },
   "dependencies": {
-    "apache-arrow": "^0.17.0",
+    "apache-arrow": "^4.0.0",
     "babyparse": "^0.4.6",
     "block-attributes": "^0.4.0",
     "block-info": "^0.4.0",
@@ -68,7 +68,11 @@
     "to-vfile": "^6.1.0",
     "twemoji": "^13.0.1",
     "uslug": "^1.0.4",
-    "vega-loader": "^4.3.2",
+    "vega": "^5.20.2",
+    "vega-embed": "^6.17.0",
+    "vega-lite": "^5.1.0",
+    "vega-loader": "^4.4.0",
+    "vega-loader-arrow": "^0.0.10",
     "vfile": "^4.2.0",
     "yamljs": "^0.3.0"
   },

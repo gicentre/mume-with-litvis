@@ -3,15 +3,10 @@
  */
 import * as YAML from "yamljs";
 import * as utility from "./utility";
+import * as vl from "vega-lite";
 import * as vega from "./vega";
 
-let vl = null;
-
 export async function toSVG(spec: string = "", baseURL: string = "") {
-  if (!vl) {
-    vl = utility.loadDependency("vega-lite/vega-lite.min.js");
-  }
-
   spec = spec.trim();
   let d;
   if (spec[0] !== "{") {
