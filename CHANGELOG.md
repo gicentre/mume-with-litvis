@@ -1,6 +1,6 @@
 This changelog is for the fork, not the [original mume library](https://github.com/shd101wyy/mume/).
 
-## Unreleased (minor)
+## 0.32.0
 
 - Upgrade vega to 5.20.2, vega-lite to 5.1.0, vega-embed to 6.17.0 and apache-arrow to 4.0.0
 
