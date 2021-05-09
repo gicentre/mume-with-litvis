@@ -579,3 +579,17 @@ export function Function(...args: string[]) {
   `);
 }
 Function.prototype = global.Function.prototype;
+
+export const resolveBuildPathForWebview = (
+  libraryName: string,
+  buildPathForWebView: string,
+) => {
+  const buildPathForNode = require.resolve(libraryName).replace(/\\/g, "/");
+  const indexOfLibraryName = buildPathForNode.indexOf(libraryName + "/");
+  const libraryPath = buildPathForNode.substring(
+    0,
+    indexOfLibraryName + libraryName.length,
+  );
+
+  return path.resolve(libraryPath, buildPathForWebView);
+};

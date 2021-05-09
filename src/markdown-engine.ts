@@ -133,27 +133,31 @@ let MODIFY_SOURCE: (
   filePath: string,
 ) => Promise<string> = null;
 
-const dependentLibraryMaterials = [
+const dependentLibraryConfigs = [
   {
-    key: "vega",
-    version: "5.20.2",
+    libraryName: "vega",
+    libraryVersion: "5",
+    buildPathForWebview: "build/vega.min.js",
   },
   {
-    key: "vega-lite",
-    version: "5.1.0",
+    libraryName: "vega-lite",
+    libraryVersion: "5",
+    buildPathForWebview: "build/vega-lite.min.js",
   },
   {
-    key: "vega-embed",
-    version: "6.17.0",
+    libraryName: "vega-embed",
+    libraryVersion: "6",
+    buildPathForWebview: "build/vega-embed.min.js",
   },
   {
-    key: "apache-arrow",
-    version: "4.0.0",
-    buildPath: "Arrow.es2015.min.js",
+    libraryName: "apache-arrow",
+    libraryVersion: "4",
+    buildPathForWebview: "Arrow.es2015.min.js",
   },
   {
-    key: "vega-loader-arrow",
-    version: "0.0.10",
+    libraryName: "vega-loader-arrow",
+    libraryVersion: "0.0",
+    buildPathForWebview: "build/vega-loader-arrow.min.js",
   },
 ];
 
@@ -649,13 +653,9 @@ if (typeof(window['Reveal']) !== 'undefined') {
       </script>`;
     }
 
-    dependentLibraryMaterials.forEach(({ key, buildPath }) => {
-      const resolvedBuildPath = buildPath || `build/${key}.js`;
+    dependentLibraryConfigs.forEach(({ libraryName, buildPathForWebview }) => {
       scripts += `<script src="${utility.addFileProtocol(
-        path.resolve(
-          utility.extensionDirectoryPath,
-          `./node_modules/${key}/${resolvedBuildPath}`,
-        ),
+        utility.resolveBuildPathForWebview(libraryName, buildPathForWebview),
         vscodePreviewPanel,
       )}" charset="UTF-8"></script>`;
     });
@@ -1246,15 +1246,16 @@ if (typeof(window['Reveal']) !== 'undefined') {
       html.indexOf(' class="vega') >= 0 ||
       html.indexOf(' class="vega-lite') >= 0
     ) {
-      dependentLibraryMaterials.forEach(({ key, version, buildPath }) => {
-        const resolvedBuildPath = buildPath || `build/${key}.js`;
-        vegaScript += options.offline
-          ? `<script type="text/javascript" src="file:///${path.resolve(
-              utility.extensionDirectoryPath,
-              `./node_modules/${key}/${resolvedBuildPath}`,
-            )}" charset="UTF-8"></script>`
-          : `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/${key}@${version}/${resolvedBuildPath}"></script>`;
-      });
+      dependentLibraryConfigs.forEach(
+        ({ libraryName, libraryVersion, buildPathForWebview }) => {
+          vegaScript += options.offline
+            ? `<script type="text/javascript" src="file:///${utility.resolveBuildPathForWebview(
+                libraryName,
+                buildPathForWebview,
+              )}" charset="UTF-8"></script>`
+            : `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/${libraryName}@${libraryVersion}/${buildPathForWebview}"></script>`;
+        },
+      );
       vegaInitScript += `<script>
       var vegaEls = document.querySelectorAll('.vega, .vega-lite');
       function reportVegaError(el, error) {
