@@ -535,13 +535,20 @@ export function allowUnsafe<T>(fn: () => T): T {
 }
 
 export const loadDependency = (dependencyPath: string) =>
-  allowUnsafe(() =>
-    require(path.resolve(
+  allowUnsafe(() => {
+    // Unsetting global.module prevents libraries like vega-lite from calling require(), which does not work
+    const prevModule = global.module;
+    global.module = undefined;
+
+    const result = require(path.resolve(
       extensionDirectoryPath,
       "dependencies",
       dependencyPath,
-    )),
-  );
+    ));
+
+    global.module = prevModule;
+    return result;
+  });
 
 export const extractCommandFromBlockInfo = (info: BlockInfo) =>
   info.attributes["cmd"] === true ? info.language : info.attributes["cmd"];
