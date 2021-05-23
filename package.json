@@ -1,6 +1,6 @@
 {
   "name": "mume-with-litvis",
-  "version": "0.32.3",
+  "version": "0.32.4",
   "description": "Fork of mume with added http://litvis.org/",
   "keywords": [
     "markdown"
