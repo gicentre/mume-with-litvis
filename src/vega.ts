@@ -1,6 +1,6 @@
 import { loader, formats } from "vega-loader";
 import * as vega from "vega";
-import arrow from "vega-loader-arrow";
+import * as arrow from "vega-loader-arrow";
 import * as YAML from "yamljs";
 import * as utility from "./utility";
 

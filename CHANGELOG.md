@@ -1,5 +1,9 @@
 This changelog is for the fork, not the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.32.4
+
+- Fix apache arrow loader
+
 ## 0.32.3
 
 - Fix interactive vega
