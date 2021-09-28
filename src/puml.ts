@@ -1,7 +1,8 @@
 import { spawn } from "child_process";
 import * as path from "path";
-import { extensionDirectoryPath } from "./utility";
 import { getExtensionConfigPath } from "./mume";
+import PlantUMLServerTask from "./puml-server";
+import { extensionDirectoryPath } from "./utility";
 
 const PlantUMLJarPath = path.resolve(
   extensionDirectoryPath,
@@ -11,7 +12,7 @@ const PlantUMLJarPath = path.resolve(
 /**
  * key is fileDirectoryPath, value is PlantUMLTask
  */
-const TASKS: { [key: string]: PlantUMLTask } = {};
+const TASKS: { [key: string]: PlantUMLTask | PlantUMLServerTask } = {};
 
 /**
  * key is fileDirectoryPath, value is String
@@ -71,11 +72,11 @@ class PlantUMLTask {
         data = this.chunks;
         this.chunks = ""; // clear CHUNKS
         const diagrams = data.split("<?xml ");
-        diagrams.forEach((diagram, i) => {
+        diagrams.forEach((diagram) => {
           if (diagram.length) {
             const callback = this.callbacks.shift();
             if (callback) {
-              callback("<?xml " + diagram);
+              callback(diagram.startsWith("<") ? diagram : "<?xml " + diagram);
             }
           }
         });
@@ -100,6 +101,7 @@ class PlantUMLTask {
 export async function render(
   content: string,
   fileDirectoryPath: string = "",
+  serverURL: string = "",
 ): Promise<string> {
   content = content.trim();
   // ' @mume_file_directory_path:/fileDirectoryPath
@@ -121,8 +123,12 @@ ${content}
   }
 
   if (!TASKS[fileDirectoryPath]) {
-    // init `plantuml.jar` task
-    TASKS[fileDirectoryPath] = new PlantUMLTask(fileDirectoryPath);
+    if (!!serverURL) {
+      TASKS[fileDirectoryPath] = new PlantUMLServerTask(serverURL);
+    } else {
+      // init `plantuml.jar` task
+      TASKS[fileDirectoryPath] = new PlantUMLTask(fileDirectoryPath);
+    }
   }
 
   return await TASKS[fileDirectoryPath].generateSVG(content);

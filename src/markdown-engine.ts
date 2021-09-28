@@ -21,10 +21,16 @@ import * as request from "request";
 import slash = require("slash");
 import * as toVFile from "to-vfile";
 import { VFile } from "vfile";
-import * as YAML from "yamljs";
 import * as vscode from "vscode";
-
+import * as YAML from "yamljs";
 import { CodeChunkData } from "./code-chunk-data";
+import useMarkdownAdmonition from "./custom-markdown-it-features/admonition";
+import useMarkdownItCodeFences from "./custom-markdown-it-features/code-fences";
+import useMarkdownItCriticMarkup from "./custom-markdown-it-features/critic-markup";
+import useMarkdownItEmoji from "./custom-markdown-it-features/emoji";
+import useMarkdownItHTML5Embed from "./custom-markdown-it-features/html5-embed";
+import useMarkdownItMath from "./custom-markdown-it-features/math";
+import useMarkdownItWikilink from "./custom-markdown-it-features/wikilink";
 import { ebookConvert } from "./ebook-convert";
 import HeadingIdGenerator from "./heading-id-generator";
 import { markdownConvert } from "./markdown-convert";
@@ -34,17 +40,6 @@ import {
 } from "./markdown-engine-config";
 import { pandocConvert } from "./pandoc-convert";
 import { princeConvert } from "./prince-convert";
-import { toc } from "./toc";
-import { HeadingData, transformMarkdown } from "./transformer";
-import * as utility from "./utility";
-
-import useMarkdownItCodeFences from "./custom-markdown-it-features/code-fences";
-import useMarkdownItCriticMarkup from "./custom-markdown-it-features/critic-markup";
-import useMarkdownItEmoji from "./custom-markdown-it-features/emoji";
-import useMarkdownItHTML5Embed from "./custom-markdown-it-features/html5-embed";
-import useMarkdownItMath from "./custom-markdown-it-features/math";
-import useMarkdownItWikilink from "./custom-markdown-it-features/wikilink";
-
 import enhanceWithCodeBlockStyling from "./render-enhancers/code-block-styling";
 import enhanceWithEmbeddedLocalImages from "./render-enhancers/embedded-local-images";
 import enhanceWithEmbeddedSvgs from "./render-enhancers/embedded-svgs";
@@ -58,6 +53,9 @@ import enhanceWithFencedCodeChunks, {
 import enhanceWithFencedDiagrams from "./render-enhancers/fenced-diagrams";
 import enhanceWithFencedMath from "./render-enhancers/fenced-math";
 import enhanceWithResolvedImagePaths from "./render-enhancers/resolved-image-paths";
+import { toc } from "./toc";
+import { HeadingData, transformMarkdown } from "./transformer";
+import * as utility from "./utility";
 import { removeFileProtocol } from "./utility";
 
 const extensionDirectoryPath = utility.extensionDirectoryPath;
@@ -312,7 +310,7 @@ export class MarkdownEngine {
     useMarkdownItHTML5Embed(this.md, this.config);
     useMarkdownItMath(this.md, this.config);
     useMarkdownItWikilink(this.md, this.config);
-
+    useMarkdownAdmonition(this.md);
     this.clearCaches();
   }
 
@@ -320,7 +318,7 @@ export class MarkdownEngine {
    * Reset config
    */
   public resetConfig() {
-    // Please notice that ~/.mume/config.json has the highest priority.
+    // Please notice that ~/.config/mume/config.json has the highest priority.
     this.config = {
       ...defaultMarkdownEngineConfig,
       ...(this.originalConfig || {}),
@@ -909,6 +907,15 @@ if (typeof(window['Reveal']) !== 'undefined') {
       vscodePreviewPanel,
     )}">`;
 
+    // style markdown-it-admonition
+    styles += `<link rel="stylesheet" media="screen" href="${utility.addFileProtocol(
+      path.resolve(
+        utility.extensionDirectoryPath,
+        "./styles/markdown-it-admonition.css",
+      ),
+      vscodePreviewPanel,
+    )}">`;
+
     // global styles
     styles += `<style>${utility.configs.globalStyle}</style>`;
 
@@ -1138,7 +1145,7 @@ if (typeof(window['Reveal']) !== 'undefined') {
           "./dependencies/katex/katex.min.css",
         )}">`;
       } else {
-        mathStyle = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">`;
+        mathStyle = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css">`;
       }
     } else {
       mathStyle = "";
@@ -1167,7 +1174,7 @@ if (typeof(window['Reveal']) !== 'undefined') {
           "./dependencies/mermaid/mermaid.min.js",
         )}" charset="UTF-8"></script>`;
       } else {
-        mermaidScript = `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@8.8.4/dist/mermaid.min.js"></script>`;
+        mermaidScript = `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@8.10.2/dist/mermaid.min.js"></script>`;
       }
       const mermaidConfig: string = await utility.getMermaidConfig(
         this.config.configPath,
@@ -1376,8 +1383,7 @@ for (var i = 0; i < flowcharts.length; i++) {
         )}'></script>`;
       } else {
         presentationScript = `
-        <script src='https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/lib/js/head.min.js'></script>
-        <script src='https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/js/reveal.js'></script>`;
+        <script src='https://cdn.jsdelivr.net/npm/reveal.js@4.1.0/dist/reveal.js'></script>`;
       }
 
       const presentationConfig = yamlConfig["presentation"] || {};
@@ -1479,7 +1485,7 @@ for (var i = 0; i < flowcharts.length; i++) {
             `./dependencies/reveal/css/theme/${theme}`,
           )}">`;
         } else {
-          presentationStyle += `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/css/theme/${theme}">`;
+          presentationStyle += `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.1.0/dist/theme/${theme}">`;
         }
       } else {
         // preview theme
@@ -1506,6 +1512,17 @@ for (var i = 0; i < flowcharts.length; i++) {
         path.resolve(extensionDirectoryPath, "./styles/style-template.css"),
         { encoding: "utf-8" },
       );
+
+      // markdown-it-admonition
+      if (html.indexOf("admonition") > 0) {
+        styleCSS += await utility.readFile(
+          path.resolve(
+            extensionDirectoryPath,
+            "./styles/markdown-it-admonition.css",
+          ),
+          { encoding: "utf-8" },
+        );
+      }
     } catch (e) {
       styleCSS = "";
     }
@@ -2141,7 +2158,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
         ebookConfig["html"] &&
         ebookConfig["html"].cdn
       ) {
-        mathStyle = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">`;
+        mathStyle = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css">`;
       } else {
         mathStyle = `<link rel="stylesheet" href="file:///${path.resolve(
           extensionDirectoryPath,
@@ -2185,6 +2202,16 @@ sidebarTOCBtn.addEventListener('click', function(event) {
           ),
           { encoding: "utf-8" },
         ),
+        // markdown-it-admonition
+        outputHTML.indexOf("admonition") > 0
+          ? utility.readFile(
+              path.resolve(
+                extensionDirectoryPath,
+                "./styles/markdown-it-admonition.css",
+              ),
+              { encoding: "utf-8" },
+            )
+          : "",
       ]);
       styleCSS = styles.join("");
     } catch (e) {
@@ -2306,6 +2333,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
         latexEngine: this.config.latexEngine,
         imageMagickPath: this.config.imageMagickPath,
         mermaidTheme: this.config.mermaidTheme,
+        plantumlServer: this.config.plantumlServer,
         onWillTransformMarkdown:
           utility.configs.parserConfig["onWillTransformMarkdown"],
         onDidTransformMarkdown:
@@ -2413,6 +2441,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
         usePandocParser: this.config.usePandocParser,
         imageMagickPath: this.config.imageMagickPath,
         mermaidTheme: this.config.mermaidTheme,
+        plantumlServer: this.config.plantumlServer,
         onWillTransformMarkdown:
           utility.configs.parserConfig["onWillTransformMarkdown"],
         onDidTransformMarkdown:
@@ -2905,7 +2934,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
           noDefaultsOrCiteProc &&
           (yamlConfig["bibliography"] || yamlConfig["references"])
         ) {
-          args.push("--filter", "pandoc-citeproc");
+          args.push("--citeproc");
         }
 
         args = this.config.pandocArguments.concat(args);
@@ -2973,6 +3002,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       removeFileProtocol(
         this.resolveFilePath(this.config.imageFolderPath, false),
       ),
+      this.config.plantumlServer,
     );
     await enhanceWithFencedCodeChunks(
       $,

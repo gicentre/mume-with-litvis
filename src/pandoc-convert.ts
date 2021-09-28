@@ -283,6 +283,7 @@ export async function pandocConvert(
     latexEngine,
     imageMagickPath,
     mermaidTheme,
+    plantumlServer,
     onWillTransformMarkdown = null,
     onDidTransformMarkdown = null,
   },
@@ -422,7 +423,7 @@ export async function pandocConvert(
     noDefaultsOrCiteProc &&
     (config["bibliography"] || config["references"])
   ) {
-    args.push("--filter", "pandoc-citeproc");
+    args.push("--citeproc");
   }
 
   if (imageDirectoryPath[0] === "/") {
@@ -446,6 +447,7 @@ export async function pandocConvert(
     imageMagickPath,
     mermaidTheme,
     addOptionsStr: true,
+    plantumlServer,
   });
 
   // pandoc will cause error if directory doesn't exist,
