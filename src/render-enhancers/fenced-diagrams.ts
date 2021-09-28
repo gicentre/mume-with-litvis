@@ -52,6 +52,7 @@ export default async function enhance(
   graphsCache: { [key: string]: string },
   fileDirectoryPath: string,
   imageDirectoryPath: string,
+  plantumlServer: string,
 ): Promise<void> {
   const asyncFunctions = [];
   $('[data-role="codeBlock"]').each((i, container) => {
@@ -83,6 +84,7 @@ export default async function enhance(
         graphsCache,
         fileDirectoryPath,
         imageDirectoryPath,
+        plantumlServer,
       ),
     );
   });
@@ -96,6 +98,7 @@ async function renderDiagram(
   graphsCache: { [key: string]: string },
   fileDirectoryPath: string,
   imageDirectoryPath: string,
+  plantumlServer: string,
 ): Promise<void> {
   let $output = null;
 
@@ -142,7 +145,7 @@ async function renderDiagram(
       case "plantuml": {
         let svg = diagramInCache;
         if (!svg) {
-          svg = await renderPlantuml(code, fileDirectoryPath);
+          svg = await renderPlantuml(code, fileDirectoryPath, plantumlServer);
           graphsCache[checksum] = svg; // store to new cache
         }
         $output = `<p ${stringifyBlockAttributes(

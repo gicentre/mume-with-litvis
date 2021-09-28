@@ -4,17 +4,17 @@ I managed many libraries by myself instead of through npm to reduce overall file
 
 ```json
 {
-  "mermaid": "8.8.4",
-  "plantuml": "1.2020.26",
+  "mermaid": "8.10.2",
+  "plantuml": "1.2021.9",
   "wavedrom": "2.3.0",
-  "reveal": "3.7.0",
+  "reveal": "4.10.0",
   "viz": "v2.0.0",
   "MathJax": "v2.7.5",
   "jquery": "v3.2.1",
   "jquery-contextmenu": "2.6.3",
   "markdown-it": "8.4.2",
   "JavaScript-MD5": "2.7.0",
-  "katex": "v0.12.0",
+  "katex": "v0.13.11",
   "crypto-js": "3.9.1-1",
   "jquery-modal": "0.8.0",
   "ditaa": "0.11",
@@ -25,7 +25,7 @@ I managed many libraries by myself instead of through npm to reduce overall file
   "webfont": "1.6.28",
   // "snap.svg": "0.5.1", // <= Doesn't work well in Preview. Use raphael.js instead
   "underscore": "1.8.3",
-  "prism": "1.22.0"
+  "prism": "1.24.1"
 }
 ```
 
@@ -40,3 +40,5 @@ _Attention_: Need to remove `font: inherit;` from `reveal.css`. Otherwise `KaTeX
 _Attention_: Need to append `.mermaid` to all selectors in `mermaid.css`, `mermaid.dark.css`, and `mermaid.forest.css`. Otherwise it will pollute `viz` graph.
 
 _Attention_: **mpld3.v0.3.min.js** min version actually has problem, so use not minified version.
+
+_Attention_: To add mhchem support to katex, we have to modify `contrib/mhchem.min.js` and replace `require("katex")` to `require("../katex.min.js")`
