@@ -2556,7 +2556,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
     this.codeChunksData = {};
     this.graphsCache = {};
     this.litvisEnhancerCache = await initLitvisEnhancerCache({
-      mumeWorkingDirectory: path.resolve(os.homedir(), ".mume"),
+      mumeWorkingDirectory: utility.getConfigPath(),
     });
   }
 
