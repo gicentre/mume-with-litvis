@@ -15,7 +15,6 @@ import {
   postEnhanceWithLitvis,
   useMarkdownItLitvisFeatures,
 } from "litvis-integration-mume";
-import * as os from "os";
 import * as path from "path";
 import * as request from "request";
 import slash = require("slash");
