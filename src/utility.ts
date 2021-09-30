@@ -57,7 +57,7 @@ export interface ParserConfig {
  * @param ms
  */
 export function sleep(ms: number) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     setTimeout(() => {
       return resolve();
     }, ms);
@@ -99,7 +99,7 @@ export function readFile(file: string, options?): Promise<string> {
 }
 
 export function writeFile(file: string, text, options?) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     fs.writeFile(file, text, options, (error) => {
       if (error) {
         return reject(error.toString());
@@ -111,7 +111,7 @@ export function writeFile(file: string, text, options?) {
 }
 
 export function write(fd: number, text: string) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     fs.write(fd, text, (error) => {
       if (error) {
         return reject(error.toString());
