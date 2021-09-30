@@ -3825,7 +3825,7 @@ literate-elm@^0.9.0:
     object-hash "^2.2.0"
     sleep-promise "^9.1.0"
 
-litvis-integration-mume@^0.10.0:
+litvis-integration-mume@0.10.0:
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/litvis-integration-mume/-/litvis-integration-mume-0.10.0.tgz#2dbc7e1ffcbd3020eeb2b861a5ad788a7e4c6e53"
   integrity sha512-+HMpDN1gfWblbBd/Mq2+NFN78zyrfy2KGRVSXuQlEOBNhaAEe/3SSov9VXXOi8uGhUcXgvHfT+lM3hDmzyOR/Q==
