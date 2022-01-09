@@ -1,5 +1,9 @@
 This changelog is for the fork, not the [original mume library](https://github.com/shd101wyy/mume/).
 
+## 0.33.1
+
+- Upgrade vega-embed to 6.20.5 and vega-lite to 5.2.0
+
 ## 0.33.0
 
 - Sync fork with the upstream `mume` library
