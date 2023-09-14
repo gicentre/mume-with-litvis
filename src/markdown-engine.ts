@@ -52,7 +52,7 @@ import enhanceWithFencedCodeChunks, {
 import enhanceWithFencedDiagrams from "./render-enhancers/fenced-diagrams";
 import enhanceWithFencedMath from "./render-enhancers/fenced-math";
 import enhanceWithResolvedImagePaths from "./render-enhancers/resolved-image-paths";
-import { toc } from "./toc";
+import { generateSidebarToCHTML } from "./toc";
 import { HeadingData, transformMarkdown } from "./transformer";
 import * as utility from "./utility";
 import { removeFileProtocol } from "./utility";
@@ -75,6 +75,7 @@ export interface MarkdownEngineRenderOption {
   runAllCodeChunks?: boolean;
   emojiToSvg?: boolean;
   vscodePreviewPanel?: vscode.WebviewPanel;
+  fileDirectoryPath?: string;
 }
 
 export interface MarkdownEngineOutput {
@@ -606,7 +607,7 @@ if (typeof(window['Reveal']) !== 'undefined') {
   Reveal.addEventListener('ready', mermaidRevealHelper)
 } else {
   // The line below will cause mermaid bug in preview.
-  // mermaid.init(null, document.getElementsByClassName('mermaid'))
+  // mermaid.init(null, document.querySelectorAll('.mermaid'))
 }
 </script>`;
 
@@ -1144,7 +1145,7 @@ if (typeof(window['Reveal']) !== 'undefined') {
           "./dependencies/katex/katex.min.css",
         )}">`;
       } else {
-        mathStyle = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css">`;
+        mathStyle = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">`;
       }
     } else {
       mathStyle = "";
@@ -1173,7 +1174,7 @@ if (typeof(window['Reveal']) !== 'undefined') {
           "./dependencies/mermaid/mermaid.min.js",
         )}" charset="UTF-8"></script>`;
       } else {
-        mermaidScript = `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@8.10.2/dist/mermaid.min.js"></script>`;
+        mermaidScript = `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.4.0/dist/mermaid.min.js"></script>`;
       }
       const mermaidConfig: string = await utility.getMermaidConfig(
         this.config.configPath,
@@ -1202,7 +1203,7 @@ if (typeof(window['Reveal']) !== 'undefined') {
   Reveal.addEventListener('slidechanged', mermaidRevealHelper)
   Reveal.addEventListener('ready', mermaidRevealHelper)
 } else {
-  mermaid.init(null, document.getElementsByClassName('mermaid'))
+  mermaid.init(null, document.querySelectorAll('.mermaid'))
 }
 </script>`;
     }
@@ -1238,8 +1239,8 @@ if (typeof(window['Reveal']) !== 'undefined') {
           "./dependencies/wavedrom/wavedrom.min.js",
         )}" charset="UTF-8"></script>`;
       } else {
-        wavedromScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/1.4.1/skins/default.js"></script>`;
-        wavedromScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/1.4.1/wavedrom.min.js"></script>`;
+        wavedromScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/2.9.1/skins/default.js"></script>`;
+        wavedromScript += `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/2.9.1/wavedrom.min.js"></script>`;
       }
       wavedromInitScript = `<script>WaveDrom.ProcessAll()</script>`;
     }
@@ -2053,13 +2054,17 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       $ul.children("li").each((offset, li) => {
         const $li = $(li);
         const $a = $li.children("a").first();
+
         if (!$a.length) {
+          if ($li.children().length >= 1) {
+            getStructure($li.children().last(), level + 1);
+          }
           return;
         }
 
         const filePath = decodeURIComponent($a.attr("href")); // markdown file path
         const heading = $a.html();
-        const id = headingIdGenerator.generateId(heading); // "ebook-heading-id-" + headingOffset;
+        const id = headingIdGenerator.generateId(`ebook-heading-` + heading); // "ebook-heading-id-" + headingOffset;
 
         tocStructure.push({ level, filePath, heading, id });
 
@@ -2075,6 +2080,9 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       ({ heading, id, level, filePath }, offset) => {
         return new Promise((resolve, reject) => {
           filePath = utility.removeFileProtocol(filePath);
+          if (filePath.match(/^https?:\/\//)) {
+            return resolve({ heading, id, level, filePath, html: "", offset });
+          }
           fs.readFile(filePath, { encoding: "utf-8" }, (error, text) => {
             if (error) {
               return reject(error.toString());
@@ -2093,12 +2101,12 @@ sidebarTOCBtn.addEventListener('click', function(event) {
                 return openTag + relativePath;
               },
             );
-
             this.parseMD(text, {
               useRelativeFilePath: false,
               isForPreview: false,
               hideFrontMatter: true,
               emojiToSvg,
+              fileDirectoryPath: path.dirname(filePath),
               /* tslint:disable-next-line:no-shadowed-variable */
             }).then(({ html }) => {
               return resolve({ heading, id, level, filePath, html, offset });
@@ -2109,14 +2117,34 @@ sidebarTOCBtn.addEventListener('click', function(event) {
     );
 
     let outputHTML = $.html().replace(/^<div>(.+)<\/div>$/, "$1");
-    let results = await Promise.all(asyncFunctions);
+    let results = (await Promise.all(asyncFunctions)) as {
+      heading: string;
+      id: string;
+      level: number;
+      filePath: string;
+      html?: string;
+    }[];
     results = results.sort((a, b) => a["offset"] - b["offset"]);
 
     /* tslint:disable-next-line:no-shadowed-variable */
     results.forEach(({ heading, id, level, filePath, html }) => {
       /* tslint:disable-next-line:no-shadowed-variable */
+
+      const $$ = cheerio.load(`<div>${html}</div>`);
+      $$("a").each((index, a) => {
+        const $a = $$(a);
+        const href = $a.attr("href");
+        if (href.startsWith("file://")) {
+          results.forEach((result) => {
+            if (result.filePath === utility.removeFileProtocol(href)) {
+              $a.attr("href", "#" + result.id);
+            }
+          });
+        }
+      });
+
       outputHTML += `<div id="${id}" ebook-toc-level-${level +
-        1} heading="${heading}">${html}</div>`; // append new content
+        1} heading="${heading}">${$$.html()}</div>`; // append new content
     });
 
     $ = cheerio.load(outputHTML);
@@ -2157,7 +2185,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
         ebookConfig["html"] &&
         ebookConfig["html"].cdn
       ) {
-        mathStyle = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css">`;
+        mathStyle = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">`;
       } else {
         mathStyle = `<link rel="stylesheet" href="file:///${path.resolve(
           extensionDirectoryPath,
@@ -2264,7 +2292,6 @@ sidebarTOCBtn.addEventListener('click', function(event) {
 
     try {
       const info = await utility.tempOpen({ prefix: "mume", suffix: ".html" });
-
       await utility.write(info.fd, html);
       await ebookConvert(info.path, dest, ebookConfig);
       deleteDownloadedImages();
@@ -2507,7 +2534,11 @@ sidebarTOCBtn.addEventListener('click', function(event) {
    * @param filePath
    * @param relative: whether to use the path relative to filePath or not.
    */
-  private resolveFilePath(filePath: string = "", relative: boolean) {
+  private resolveFilePath(
+    filePath: string = "",
+    relative: boolean,
+    fileDirectoryPath = "",
+  ) {
     if (
       filePath.match(this.protocolsWhiteListRegExp) ||
       filePath.startsWith("data:image/") ||
@@ -2517,7 +2548,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
     } else if (filePath[0] === "/") {
       if (relative) {
         return path.relative(
-          this.fileDirectoryPath,
+          fileDirectoryPath || this.fileDirectoryPath,
           path.resolve(this.projectDirectoryPath, "." + filePath),
         );
       } else {
@@ -2531,7 +2562,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
         return filePath;
       } else {
         return utility.addFileProtocol(
-          path.resolve(this.fileDirectoryPath, filePath),
+          path.resolve(fileDirectoryPath || this.fileDirectoryPath, filePath),
           this.vscodePreviewPanel,
         );
       }
@@ -2643,7 +2674,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
    */
   private parseSlides(
     html: string,
-    slideConfigs: object[],
+    slideConfigs: any[],
     useRelativeFilePath: boolean,
   ) {
     let slides = html.split("<p>[MUMESLIDE]</p>");
@@ -2661,19 +2692,19 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       // resolve paths in slideConfig
       if ("data-background-image" in slideConfig) {
         slideConfig["data-background-image"] = this.resolveFilePath(
-          slideConfig["data-background-image"],
+          slideConfig["data-background-image"] as string,
           useRelativeFilePath,
         );
       }
       if ("data-background-video" in slideConfig) {
         slideConfig["data-background-video"] = this.resolveFilePath(
-          slideConfig["data-background-video"],
+          slideConfig["data-background-video"] as string,
           useRelativeFilePath,
         );
       }
       if ("data-background-iframe" in slideConfig) {
         slideConfig["data-background-iframe"] = this.resolveFilePath(
-          slideConfig["data-background-iframe"],
+          slideConfig["data-background-iframe"] as string,
           useRelativeFilePath,
         );
       }
@@ -2879,7 +2910,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       headings,
       frontMatterString,
     } = await transformMarkdown(inputString, {
-      fileDirectoryPath: this.fileDirectoryPath,
+      fileDirectoryPath: options.fileDirectoryPath || this.fileDirectoryPath,
       projectDirectoryPath: this.projectDirectoryPath,
       forPreview: options.isForPreview,
       protocolsWhiteListRegExp: this.protocolsWhiteListRegExp,
@@ -2956,8 +2987,16 @@ sidebarTOCBtn.addEventListener('click', function(event) {
     const depthTo = tocConfig["depth_to"] || 6;
     const ordered = tocConfig["ordered"];
 
-    const tocObject = toc(headings, { ordered, depthFrom, depthTo, tab: "  " });
-    this.tocHTML = this.md.render(tocObject.content);
+    // const tocObject = toc(headings, { ordered, depthFrom, depthTo, tab: "  " });
+    // this.tocHTML = this.md.render(tocObject.content);
+
+    // Collaposible ToC
+    this.tocHTML = generateSidebarToCHTML(
+      headings,
+      this.md.render.bind(this.md),
+      { ordered, depthFrom, depthTo, tab: "  " },
+    );
+
     // }
     this.headings = headings; // reset headings information
 
@@ -2997,7 +3036,7 @@ sidebarTOCBtn.addEventListener('click', function(event) {
     await enhanceWithFencedDiagrams(
       $,
       this.graphsCache,
-      this.fileDirectoryPath,
+      options.fileDirectoryPath || this.fileDirectoryPath,
       removeFileProtocol(
         this.resolveFilePath(this.config.imageFolderPath, false),
       ),

@@ -402,6 +402,12 @@ var handleObject = (tree, a11yStrings, atomType) => {
         break;
       }
 
+    case "pmb":
+      {
+        a11yStrings.push("bold");
+        break;
+      }
+
     case "phantom":
       {
         a11yStrings.push("empty space");
@@ -791,4 +797,4 @@ var renderA11yString = function renderA11yString(text, settings) {
   return flatten(a11yStrings).join(", ");
 };
 
-export default renderA11yString;
+export { renderA11yString as default };
