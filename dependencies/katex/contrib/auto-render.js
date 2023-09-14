@@ -7,15 +7,15 @@
 		exports["renderMathInElement"] = factory(require("katex"));
 	else
 		root["renderMathInElement"] = factory(root["katex"]);
-})((typeof self !== 'undefined' ? self : this), function(__WEBPACK_EXTERNAL_MODULE__974__) {
+})((typeof self !== 'undefined' ? self : this), function(__WEBPACK_EXTERNAL_MODULE__771__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 974:
+/***/ 771:
 /***/ (function(module) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__974__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__771__;
 
 /***/ })
 
@@ -86,7 +86,7 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: external "katex"
-var external_katex_ = __webpack_require__(974);
+var external_katex_ = __webpack_require__(771);
 var external_katex_default = /*#__PURE__*/__webpack_require__.n(external_katex_);
 ;// CONCATENATED MODULE: ./contrib/auto-render/splitAtDelimiters.js
 /* eslint no-constant-condition:0 */
@@ -235,11 +235,33 @@ var renderElem = function renderElem(elem, optionsCopy) {
 
     if (childNode.nodeType === 3) {
       // Text node
-      var frag = renderMathInText(childNode.textContent, optionsCopy);
+      // Concatenate all sibling text nodes.
+      // Webkit browsers split very large text nodes into smaller ones,
+      // so the delimiters may be split across different nodes.
+      var textContentConcat = childNode.textContent;
+      var sibling = childNode.nextSibling;
+      var nSiblings = 0;
+
+      while (sibling && sibling.nodeType === Node.TEXT_NODE) {
+        textContentConcat += sibling.textContent;
+        sibling = sibling.nextSibling;
+        nSiblings++;
+      }
+
+      var frag = renderMathInText(textContentConcat, optionsCopy);
 
       if (frag) {
+        // Remove extra text nodes
+        for (var j = 0; j < nSiblings; j++) {
+          childNode.nextSibling.remove();
+        }
+
         i += frag.childNodes.length - 1;
         elem.replaceChild(frag, childNode);
+      } else {
+        // If the concatenated text does not contain math
+        // the siblings will not either
+        i += nSiblings;
       }
     } else if (childNode.nodeType === 1) {
       (function () {
@@ -320,7 +342,7 @@ var renderMathInElement = function renderMathInElement(elem, options) {
 
 /* harmony default export */ var auto_render = (renderMathInElement);
 }();
-__webpack_exports__ = __webpack_exports__.default;
+__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;

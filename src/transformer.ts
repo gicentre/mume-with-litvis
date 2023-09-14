@@ -249,7 +249,7 @@ export async function transformMarkdown(
     fileDirectoryPath = "",
     projectDirectoryPath = "",
     filesCache = {},
-    useRelativeFilePath = null,
+    useRelativeFilePath = false,
     forPreview = false,
     forMarkdownExport = false,
     protocolsWhiteListRegExp = null,
@@ -265,7 +265,7 @@ export async function transformMarkdown(
   let codeChunkOffset = 0;
   const slideConfigs = [];
   const JSAndCssFiles = [];
-  let headings = [];
+  let headings: HeadingData[] = [];
   let tocBracketEnabled = false;
   let frontMatterString = "";
 
@@ -895,7 +895,8 @@ export async function transformMarkdown(
             } else if (
               extname === ".dot" ||
               extname === ".gv" ||
-              extname === ".viz"
+              extname === ".viz" ||
+              extname === ".graphviz"
             ) {
               // graphviz
               output = `\`\`\`dot ${stringifyBlockAttributes(

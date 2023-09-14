@@ -1,5 +1,5 @@
 import { Readable } from "stream";
-import * as fetch from "node-fetch";
+import fetch from "node-fetch";
 
 export default class PlantUMLServerTask {
   private serverURL: string;
@@ -16,6 +16,7 @@ export default class PlantUMLServerTask {
     return fetch(this.serverURL, {
       method: "POST",
       body: contentStream,
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
     }).then((res) => res.text());
   }
 }

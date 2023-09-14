@@ -1,7 +1,6 @@
 /**
  * A wrapper of mermaid CLI
- * https://github.com/mermaid-js/mermaid.cli
- * But it doesn't work well
+ * https://github.com/mermaid-js/mermaid-cli
  */
 
 import * as utility from "./utility";
@@ -24,6 +23,8 @@ export async function mermaidToPNG(
     await utility.execFile(
       "npx",
       [
+        "-p",
+        "@mermaid-js/mermaid-cli",
         "mmdc",
         "--theme",
         themeName,
@@ -40,7 +41,7 @@ export async function mermaidToPNG(
     return pngFilePath;
   } catch (error) {
     throw new Error(
-      "mermaid CLI is required to be installed.\nCheck https://github.com/mermaid-js/mermaid.cli for more information.\n\n" +
+      "mermaid CLI is required to be installed.\nCheck https://github.com/mermaid-js/mermaid-cli for more information.\n\n" +
         error.toString(),
     );
   }

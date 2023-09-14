@@ -35,6 +35,7 @@ const supportedLanguages = [
   "seq",
   "sequence-diagram",
   "wavedrom",
+  "graphviz",
   "viz",
   "dot",
   "vega",
@@ -153,6 +154,7 @@ async function renderDiagram(
         )}>${svg}</p>`;
         break;
       }
+      case "graphviz":
       case "viz":
       case "dot": {
         let svg = diagramInCache;

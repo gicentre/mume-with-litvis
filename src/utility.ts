@@ -8,6 +8,7 @@ import * as path from "path";
 import * as vm from "vm";
 import * as temp from "temp";
 import * as vscode from "vscode";
+
 temp.track();
 
 const TAGS_TO_REPLACE = {

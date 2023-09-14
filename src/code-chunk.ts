@@ -172,11 +172,14 @@ except Exception:
 }
 
 const fileExtensionMap = {
-  go: ".go",
-  javascript: ".js",
-  python: ".py",
+  "go": ".go",
+  "javascript": ".js",
+  "python": ".py",
+  "typescript": ".ts",
+  "node": ".js",
+  "ts-node": ".ts",
 };
 
-function getFileExtension(language: string): string {
-  return fileExtensionMap[language] || "";
+function getFileExtension(cmd: string): string {
+  return fileExtensionMap[cmd] || `.${cmd}`;
 }
