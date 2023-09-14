@@ -57,7 +57,7 @@
     "mkdirp": "^1.0.4",
     "node-fetch": "^2.7.0",
     "puppeteer-core": "1.15.0",
-    "qiniu": "^7.3.2",
+    "qiniu": "^7.9.0",
     "request": "^2.88.2",
     "slash": "^3.0.0",
     "temp": "^0.9.1",
