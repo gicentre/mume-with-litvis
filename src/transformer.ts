@@ -1,15 +1,14 @@
-// import * as Baby from "babyparse"
 import * as Baby from "babyparse";
+import {
+  parseBlockAttributes,
+  stringifyBlockAttributes,
+} from "block-attributes";
 import * as fs from "fs";
 import * as less from "less";
 import * as path from "path";
 import * as request from "request";
 import * as temp from "temp";
 import HeadingIdGenerator from "./heading-id-generator";
-import {
-  parseBlockAttributes,
-  stringifyBlockAttributes,
-} from "./lib/block-attributes";
 import computeChecksum from "./lib/compute-checksum";
 import * as utility from "./utility";
 
