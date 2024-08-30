@@ -1,11 +1,25 @@
 // tslint:disable no-var-requires member-ordering
-
+import {
+  parseBlockAttributes,
+  stringifyBlockAttributes,
+} from "block-attributes";
+import { normalizeBlockInfo, parseBlockInfo } from "block-info";
 import * as cheerio from "cheerio";
 import { execFile } from "child_process";
 import * as fs from "fs";
+import {
+  enhanceWithLitvis,
+  initLitvisEnhancerCache,
+  LitvisEnhancerCache,
+  loadAndProcessLitvisNarrative,
+  postEnhanceWithLitvis,
+  useMarkdownItLitvisFeatures,
+} from "litvis-integration-mume";
 import * as path from "path";
 import * as request from "request";
-import * as slash from "slash";
+import slash = require("slash");
+import * as toVFile from "to-vfile";
+import { VFile } from "vfile";
 import * as vscode from "vscode";
 import * as YAML from "yamljs";
 import { CodeChunkData } from "./code-chunk-data";
@@ -18,11 +32,6 @@ import useMarkdownItMath from "./custom-markdown-it-features/math";
 import useMarkdownItWikilink from "./custom-markdown-it-features/wikilink";
 import { ebookConvert } from "./ebook-convert";
 import HeadingIdGenerator from "./heading-id-generator";
-import {
-  parseBlockAttributes,
-  stringifyBlockAttributes,
-} from "./lib/block-attributes";
-import { normalizeBlockInfo, parseBlockInfo } from "./lib/block-info";
 import { markdownConvert } from "./markdown-convert";
 import {
   defaultMarkdownEngineConfig,
@@ -122,20 +131,35 @@ let MODIFY_SOURCE: (
   filePath: string,
 ) => Promise<string> = null;
 
-const dependentLibraryMaterials = [
+const dependentLibraryConfigs = [
   {
-    key: "vega",
-    version: "5.4.0",
+    libraryName: "vega",
+    libraryVersion: "5",
+    buildPathForWebview: "build/vega.min.js",
   },
   {
-    key: "vega-lite",
-    version: "3.3.0",
+    libraryName: "vega-lite",
+    libraryVersion: "5",
+    buildPathForWebview: "build/vega-lite.min.js",
   },
   {
-    key: "vega-embed",
-    version: "4.2.0",
+    libraryName: "vega-embed",
+    libraryVersion: "6",
+    buildPathForWebview: "build/vega-embed.min.js",
+  },
+  {
+    libraryName: "apache-arrow",
+    libraryVersion: "4",
+    buildPathForWebview: "Arrow.es2015.min.js",
+  },
+  {
+    libraryName: "vega-loader-arrow",
+    libraryVersion: "0.0",
+    buildPathForWebview: "build/vega-loader-arrow.min.js",
   },
 ];
+
+let UPDATE_LINTING_REPORT: (vFiles: VFile[]) => void = null;
 
 /**
  * The markdown engine that can be used to parse markdown and export files
@@ -175,6 +199,16 @@ export class MarkdownEngine {
     MODIFY_SOURCE = cb;
   }
 
+  public static async updateLintingReport(vFiles: VFile[]) {
+    if (UPDATE_LINTING_REPORT) {
+      await UPDATE_LINTING_REPORT(vFiles);
+    }
+  }
+
+  public static onUpdateLintingReport(cb: (vFiles: VFile[]) => void) {
+    UPDATE_LINTING_REPORT = cb;
+  }
+
   /**
    * markdown file path
    */
@@ -202,6 +236,8 @@ export class MarkdownEngine {
 
   // caches
   private graphsCache: { [key: string]: string } = {};
+
+  private litvisEnhancerCache: LitvisEnhancerCache;
 
   // code chunks
   private codeChunksData: { [key: string]: CodeChunkData } = {};
@@ -270,10 +306,12 @@ export class MarkdownEngine {
     useMarkdownItCodeFences(this.md, this.config);
     useMarkdownItCriticMarkup(this.md, this.config);
     useMarkdownItEmoji(this.md, this.config);
+    useMarkdownItLitvisFeatures(this.md, this.config);
     useMarkdownItHTML5Embed(this.md, this.config);
     useMarkdownItMath(this.md, this.config);
     useMarkdownItWikilink(this.md, this.config);
     useMarkdownAdmonition(this.md);
+    this.clearCaches();
   }
 
   /**
@@ -613,12 +651,9 @@ if (typeof(window['Reveal']) !== 'undefined') {
       </script>`;
     }
 
-    dependentLibraryMaterials.forEach(({ key }) => {
+    dependentLibraryConfigs.forEach(({ libraryName, buildPathForWebview }) => {
       scripts += `<script src="${utility.addFileProtocol(
-        path.resolve(
-          utility.extensionDirectoryPath,
-          `./dependencies/${key}/${key}.min.js`,
-        ),
+        utility.resolveBuildPathForWebview(libraryName, buildPathForWebview),
         vscodePreviewPanel,
       )}" charset="UTF-8"></script>`;
     });
@@ -1218,15 +1253,16 @@ if (typeof(window['Reveal']) !== 'undefined') {
       html.indexOf(' class="vega') >= 0 ||
       html.indexOf(' class="vega-lite') >= 0
     ) {
-      dependentLibraryMaterials.forEach(({ key, version }) => {
-        vegaScript += options.offline
-          ? `<script type="text/javascript" src="file:///${path.resolve(
-              utility.extensionDirectoryPath,
-              `./dependencies/${key}/${key}.min.js`,
-            )}" charset="UTF-8"></script>`
-          : `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/${key}@${version}/build/${name}.js"></script>`;
-      });
-
+      dependentLibraryConfigs.forEach(
+        ({ libraryName, libraryVersion, buildPathForWebview }) => {
+          vegaScript += options.offline
+            ? `<script type="text/javascript" src="file:///${utility.resolveBuildPathForWebview(
+                libraryName,
+                buildPathForWebview,
+              )}" charset="UTF-8"></script>`
+            : `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/${libraryName}@${libraryVersion}/${buildPathForWebview}"></script>`;
+        },
+      );
       vegaInitScript += `<script>
       var vegaEls = document.querySelectorAll('.vega, .vega-lite');
       function reportVegaError(el, error) {
@@ -2545,10 +2581,13 @@ sidebarTOCBtn.addEventListener('click', function(event) {
   /**
    * clearCaches will clear filesCache, codeChunksData, graphsCache
    */
-  public clearCaches() {
+  public async clearCaches() {
     this.filesCache = {};
     this.codeChunksData = {};
     this.graphsCache = {};
+    this.litvisEnhancerCache = await initLitvisEnhancerCache({
+      mumeWorkingDirectory: utility.getConfigPath(),
+    });
   }
 
   private frontMatterToTable(arg) {
@@ -2966,6 +3005,19 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       html = html.replace(/^\s*<p>\[MUMETOC\]<\/p>\s*/gm, this.tocHTML);
     }
 
+    // process current file with litvis
+    // TODO: pass all unsaved Atom files as virtual files
+    const processedNarrative = await loadAndProcessLitvisNarrative(
+      this.filePath,
+      [
+        toVFile({
+          path: this.filePath,
+          contents: inputString,
+        }),
+      ],
+      this.litvisEnhancerCache.litvisCache,
+    );
+
     /**
      * resolve image paths and render code block.
      */
@@ -2974,6 +3026,12 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       $,
       this.config.mathRenderingOption,
       this.config.mathBlockDelimiters,
+    );
+    await enhanceWithLitvis(
+      processedNarrative,
+      $,
+      this.litvisEnhancerCache,
+      this.parseMD.bind(this),
     );
     await enhanceWithFencedDiagrams(
       $,
@@ -3009,7 +3067,14 @@ sidebarTOCBtn.addEventListener('click', function(event) {
     //   enhanceWithEmojiToSvg($);
     // }
 
-    html = frontMatterTable + $("head").html() + $("body").html(); // cheerio $.html() will add <html><head></head><body>$html</body></html>, so we hack it by select body first.
+    html =
+      frontMatterTable +
+      $("head").html() +
+      postEnhanceWithLitvis(
+        processedNarrative,
+        $("body").html(), // cheerio $.html() will add <html><head></head><body>$html</body></html>, so we hack it by select body first.
+        MarkdownEngine.updateLintingReport as any,
+      );
 
     /**
      * check slides

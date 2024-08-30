@@ -1,7 +1,10 @@
-import { loader } from "vega-loader";
+import { loader, formats } from "vega-loader";
+import * as vega from "vega";
+import * as arrow from "vega-loader-arrow";
 import * as YAML from "yamljs";
 import * as utility from "./utility";
-let vega = null;
+
+formats("arrow", arrow);
 
 async function renderVega(spec: object, baseURL): Promise<string> {
   const svgHeader =
@@ -13,16 +16,15 @@ async function renderVega(spec: object, baseURL): Promise<string> {
     baseURL += "/";
   }
 
-  async function helper(): Promise<string> {
-    const view = new vega.View(vega.parse(spec), {
+  const view = utility.allowUnsafe(() =>
+    new vega.View(vega.parse(spec), {
       loader: loader({ baseURL }),
       // logLevel: vega.Warn, // <= this will cause Atom unsafe eval error.
       renderer: "none",
-    }).initialize();
-    return svgHeader + (await view.toSVG());
-  }
+    }).initialize(),
+  );
 
-  return await utility.allowUnsafeEvalAndUnsafeNewFunctionAsync(helper);
+  return svgHeader + (await view.toSVG());
 }
 
 /**
@@ -33,10 +35,6 @@ export async function toSVG(
   spec: string = "",
   baseURL: string = "",
 ): Promise<string> {
-  if (!vega) {
-    vega = utility.loadDependency("vega/vega.min.js");
-  }
-
   spec = spec.trim();
   let d;
   if (spec[0] !== "{") {

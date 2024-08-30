@@ -1,10 +1,10 @@
+import { BlockAttributes } from "block-attributes";
 import { spawn } from "child_process";
 import { unlink } from "fs-extra";
 import * as path from "path";
 import * as vm from "vm";
 
 import * as LaTeX from "./latex";
-import { BlockAttributes } from "./lib/block-attributes";
 import * as utility from "./utility";
 
 export async function compileLaTeX(
@@ -172,11 +172,11 @@ except Exception:
 }
 
 const fileExtensionMap = {
-  go: ".go",
-  javascript: ".js",
-  python: ".py",
-  typescript: ".ts",
-  node: ".js",
+  "go": ".go",
+  "javascript": ".js",
+  "python": ".py",
+  "typescript": ".ts",
+  "node": ".js",
   "ts-node": ".ts",
 };
 

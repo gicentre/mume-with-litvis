@@ -1,9 +1,9 @@
+import { parseBlockAttributes } from "block-attributes";
 import * as cheerio from "cheerio";
 import * as path from "path";
 
 import { compileLaTeX } from "./code-chunk";
 import { CodeChunkData } from "./code-chunk-data";
-import { parseBlockAttributes } from "./lib/block-attributes";
 import computeChecksum from "./lib/compute-checksum";
 import { svgElementToPNGFile } from "./magick";
 import * as plantumlAPI from "./puml";

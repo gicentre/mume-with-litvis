@@ -2,12 +2,12 @@ import * as child_process from "child_process";
 import * as fs from "fs";
 import * as jsYAML from "js-yaml";
 import * as less from "less";
+import { BlockInfo } from "block-info";
 import * as os from "os";
 import * as path from "path";
 import * as vm from "vm";
 import * as temp from "temp";
 import * as vscode from "vscode";
-import { BlockInfo } from "./lib/block-info";
 
 temp.track();
 
@@ -535,83 +535,45 @@ export const configs: {
 
 export { uploadImage } from "./image-uploader";
 
-/**
- * Allow unsafed `eval` function
- * Referred from:
- *     https://github.com/atom/loophole/blob/master/src/loophole.coffee
- * @param fn
- */
-export function allowUnsafeEval(fn) {
-  const previousEval = global.eval;
+let originalEval = global.eval;
+let originalFunction = global.Function;
+let numberOfActiveOverrides = 0;
+
+export function allowUnsafe<T>(fn: () => T): T {
+  if (numberOfActiveOverrides === 0) {
+    originalEval = global.eval;
+    originalFunction = global.Function;
+  }
   try {
+    numberOfActiveOverrides += 1;
     global.eval = (source) => {
       vm.runInThisContext(source);
     };
     return fn();
   } finally {
-    global.eval = previousEval;
-  }
-}
-
-export async function allowUnsafeEvalAync(fn: () => Promise<any>) {
-  const previousEval = global.eval;
-  try {
-    global.eval = (source) => {
-      vm.runInThisContext(source);
-    };
-    return await fn();
-  } finally {
-    global.eval = previousEval;
-  }
-}
-
-export function allowUnsafeNewFunction(fn) {
-  const previousFunction = global.Function;
-  try {
-    global.Function = Function as FunctionConstructor;
-    return fn();
-  } finally {
-    global.Function = previousFunction;
-  }
-}
-
-export async function allowUnsafeNewFunctionAsync(fn: () => Promise<any>) {
-  const previousFunction = global.Function;
-  try {
-    global.Function = Function as FunctionConstructor;
-    return await fn();
-  } finally {
-    global.Function = previousFunction;
-  }
-}
-
-export async function allowUnsafeEvalAndUnsafeNewFunctionAsync(
-  fn: () => Promise<any>,
-) {
-  const previousFunction = global.Function;
-  const previousEval = global.eval;
-  try {
-    global.Function = Function as FunctionConstructor;
-    global.eval = (source) => {
-      vm.runInThisContext(source);
-    };
-    return await fn();
-  } finally {
-    global.eval = previousEval;
-    global.Function = previousFunction;
+    numberOfActiveOverrides -= 1;
+    if (numberOfActiveOverrides === 0) {
+      global.eval = originalEval;
+      global.Function = originalFunction;
+    }
   }
 }
 
 export const loadDependency = (dependencyPath: string) =>
-  allowUnsafeEval(() =>
-    allowUnsafeNewFunction(() =>
-      require(path.resolve(
-        extensionDirectoryPath,
-        "dependencies",
-        dependencyPath,
-      )),
-    ),
-  );
+  allowUnsafe(() => {
+    // Unsetting global.module prevents libraries like vega-lite from calling require(), which does not work
+    const prevModule = global.module;
+    global.module = undefined;
+
+    const result = require(path.resolve(
+      extensionDirectoryPath,
+      "dependencies",
+      dependencyPath,
+    ));
+
+    global.module = prevModule;
+    return result;
+  });
 
 export const extractCommandFromBlockInfo = (info: BlockInfo) =>
   info.attributes["cmd"] === true ? info.language : info.attributes["cmd"];
@@ -642,3 +604,17 @@ export function Function(...args: string[]) {
   `);
 }
 Function.prototype = global.Function.prototype;
+
+export const resolveBuildPathForWebview = (
+  libraryName: string,
+  buildPathForWebView: string,
+) => {
+  const buildPathForNode = require.resolve(libraryName).replace(/\\/g, "/");
+  const indexOfLibraryName = buildPathForNode.indexOf(libraryName + "/");
+  const libraryPath = buildPathForNode.substring(
+    0,
+    indexOfLibraryName + libraryName.length,
+  );
+
+  return path.resolve(libraryPath, buildPathForWebView);
+};
