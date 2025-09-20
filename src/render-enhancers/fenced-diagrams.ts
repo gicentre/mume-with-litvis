@@ -1,4 +1,6 @@
 // tslint:disable:ban-types no-var-requires
+import { BlockAttributes, stringifyBlockAttributes } from "block-attributes";
+import { BlockInfo } from "block-info";
 import * as YAML from "yamljs";
 
 import { render as renderDitaa } from "../ditaa";
@@ -8,12 +10,6 @@ import { escapeString } from "../utility";
 import { toSVG as vegaToSvg } from "../vega";
 import { toSVG as vegaLiteToSvg } from "../vega-lite";
 import { Viz } from "../viz";
-
-import {
-  BlockAttributes,
-  stringifyBlockAttributes,
-} from "../lib/block-attributes";
-import { BlockInfo } from "../lib/block-info";
 
 const ensureClassInAttributes = (
   attributes: BlockAttributes,
