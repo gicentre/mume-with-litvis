@@ -5,8 +5,8 @@
 
 // tslint:disable-next-line no-implicit-dependencies
 import { escape } from 'html-escaper';
-import type MarkdownIt from 'markdown-it';
-import { normalizeBlockInfo, parseBlockInfo } from 'block-info';
+import MarkdownIt from 'markdown-it';
+import { normalizeBlockInfo, parseBlockInfo } from '../lib/block-info';
 
 export default (md: MarkdownIt) => {
   md.renderer.rules.fence = (tokens, idx) => {

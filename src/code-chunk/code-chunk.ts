@@ -3,7 +3,7 @@ import * as fs from 'fs/promises';
 import { unlink } from 'fs/promises';
 import * as path from 'path';
 import * as vm from 'vm';
-import { BlockAttributes } from 'block-attributes';
+import { BlockAttributes } from '../lib/block-attributes';
 import * as LaTeX from '../tools/latex';
 
 export async function compileLaTeX(

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 import * as vm from 'vm';
 import * as vscode from 'vscode';
 import * as YAML from 'yaml';
-import { BlockInfo } from 'block-info';
+import { BlockInfo } from './lib/block-info';
 
 // Polyfill structuredClone if it's not supported
 if (!('structuredClone' in globalThis)) {

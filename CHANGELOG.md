@@ -1,6 +1,6 @@
 This changelog is for the fork, not the [original mume library](https://github.com/shd101wyy/mume/).
 
-## 0.34.0
+Please visit https://github.com/shd101wyy/vscode-markdown-preview-enhanced/releases for the more changelog
 
 - Sync with upstream ([#32](https://github.com/gicentre/mume-with-litvis/pull/32))
 - Update vega dependencies
