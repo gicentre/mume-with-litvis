@@ -17,10 +17,10 @@ import { ebookConvert } from '../converters/ebook-convert';
 import { markdownConvert } from '../converters/markdown-convert';
 import { pandocConvert } from '../converters/pandoc-convert';
 import { princeConvert } from '../converters/prince-convert';
-import { parseBlockAttributes } from '../lib/block-attributes/parseBlockAttributes';
-import { stringifyBlockAttributes } from '../lib/block-attributes/stringifyBlockAttributes';
-import { normalizeBlockInfo } from '../lib/block-info/normalize-block-info';
-import { parseBlockInfo } from '../lib/block-info/parse-block-info';
+import { parseBlockAttributes } from 'block-attributes';
+import { stringifyBlockAttributes } from 'block-attributes';
+import { normalizeBlockInfo } from 'block-info';
+import { parseBlockInfo } from 'block-info';
 import {
   FileSystemApi,
   Notebook,

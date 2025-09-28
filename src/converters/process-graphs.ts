@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio';
 import * as path from 'path';
 import { compileLaTeX } from '../code-chunk/code-chunk';
 import { CodeChunkData } from '../code-chunk/code-chunk-data';
-import { parseBlockAttributes } from '../lib/block-attributes';
+import { parseBlockAttributes } from 'block-attributes';
 import computeChecksum from '../lib/compute-checksum';
 import { Notebook } from '../notebook';
 import * as plantumlAPI from '../renderers/puml';

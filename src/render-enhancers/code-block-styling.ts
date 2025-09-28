@@ -1,5 +1,5 @@
 import { escape } from 'html-escaper';
-import { BlockInfo } from '../lib/block-info/index';
+import { BlockInfo } from 'block-info';
 import { scopeForLanguageName } from '../markdown-engine/extension-helper';
 import defineIeleLanguage from '../prism/iele';
 import defineKLanguage from '../prism/k';

@@ -9,7 +9,7 @@ import {
   BlockAttributes,
   parseBlockAttributes,
   stringifyBlockAttributes,
-} from '../lib/block-attributes';
+} from 'block-attributes';
 import computeChecksum from '../lib/compute-checksum';
 import { Notebook } from '../notebook';
 import * as PDF from '../tools/pdf';
