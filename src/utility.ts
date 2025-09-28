@@ -1,129 +1,23 @@
-import * as child_process from "child_process";
-import * as fs from "fs";
-import * as jsYAML from "js-yaml";
-import * as less from "less";
-import { BlockInfo } from "block-info";
-import * as os from "os";
-import * as path from "path";
-import * as vm from "vm";
-import * as temp from "temp";
-import * as vscode from "vscode";
+import structuredClone from '@ungap/structured-clone';
+import * as child_process from 'child_process';
+import * as path from 'path';
+import Sval from 'sval';
+import * as temp from 'temp';
+import { JsonObject } from 'type-fest';
+import { fileURLToPath } from 'url';
+import * as vm from 'vm';
+import * as vscode from 'vscode';
+import * as YAML from 'yaml';
+import { BlockInfo } from 'block-info';
+
+// Polyfill structuredClone if it's not supported
+if (!('structuredClone' in globalThis)) {
+  globalThis.structuredClone = structuredClone;
+}
 
 temp.track();
 
-const TAGS_TO_REPLACE = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#x27;",
-  "/": "&#x2F;",
-  "\\": "&#x5C;",
-};
-
-const TAGS_TO_REPLACE_REVERSE = {
-  "&amp;": "&",
-  "&lt;": "<",
-  "&gt;": ">",
-  "&quot;": '"',
-  "&apos;": "'",
-  "&#x27;": "'",
-  "&#x2F;": "/",
-  "&#x5C;": "\\",
-};
-
-export function escapeString(str: string = ""): string {
-  return str.replace(/[&<>"'\/\\]/g, (tag) => TAGS_TO_REPLACE[tag] || tag);
-}
-
-export function unescapeString(str: string = ""): string {
-  return str.replace(
-    /\&(amp|lt|gt|quot|apos|\#x27|\#x2F|\#x5C)\;/g,
-    (whole) => TAGS_TO_REPLACE_REVERSE[whole] || whole,
-  );
-}
-
-export interface ParserConfig {
-  onWillParseMarkdown?: (markdown: string) => Promise<string>;
-  onDidParseMarkdown?: (
-    html: string,
-    opts: { cheerio: CheerioAPI },
-  ) => Promise<string>;
-  onWillTransformMarkdown?: (markdown: string) => Promise<string>;
-  onDidTransformMarkdown?: (markdown: string) => Promise<string>;
-}
-
-/**
- * Do nothing and sleep for `ms` milliseconds
- * @param ms
- */
-export function sleep(ms: number) {
-  return new Promise<void>((resolve, reject) => {
-    setTimeout(() => {
-      return resolve();
-    }, ms);
-  });
-}
-
-export function parseYAML(yaml: string = "") {
-  // YAML doesn't work well with front-matter
-  /*
-  try {
-    return YAML.parse(yaml)
-  } catch(error) {
-    return {}
-  }
-  */
-  if (yaml.startsWith("---")) {
-    yaml = yaml
-      .trim()
-      .replace(/^---\r?\n/, "")
-      .replace(/\r?\n---$/, "");
-  }
-  try {
-    return jsYAML.safeLoad(yaml);
-  } catch (error) {
-    return {};
-  }
-}
-
-export function readFile(file: string, options?): Promise<string> {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, options, (error, text) => {
-      if (error) {
-        return reject(error.toString());
-      } else {
-        return resolve(text.toString());
-      }
-    });
-  });
-}
-
-export function writeFile(file: string, text, options?) {
-  return new Promise<void>((resolve, reject) => {
-    fs.writeFile(file, text, options, (error) => {
-      if (error) {
-        return reject(error.toString());
-      } else {
-        return resolve();
-      }
-    });
-  });
-}
-
-export function write(fd: number, text: string) {
-  return new Promise<void>((resolve, reject) => {
-    fs.write(fd, text, (error) => {
-      if (error) {
-        return reject(error.toString());
-      } else {
-        return resolve();
-      }
-    });
-  });
-}
-
-export function tempOpen(options): Promise<any> {
+export function tempOpen(options: temp.AffixOptions): Promise<temp.OpenFile> {
   return new Promise((resolve, reject) => {
     temp.open(options, (error, info) => {
       if (error) {
@@ -135,327 +29,108 @@ export function tempOpen(options): Promise<any> {
   });
 }
 
-export function execFile(
-  file: string,
-  args: string[],
-  options?: object,
-): Promise<string> {
-  return new Promise((resolve, reject) => {
-    child_process.execFile(file, args, options, (error, stdout, stderr) => {
-      if (error) {
-        return reject(error.toString());
-      } else if (stderr) {
-        return reject(stderr);
-      } else {
-        return resolve(stdout);
-      }
-    });
-  });
-}
-
 /**
  * open html file in browser or open pdf file in reader ... etc
  * @param filePath
  */
 export function openFile(filePath: string) {
-  if (process.platform === "win32") {
+  if (process.platform === 'win32') {
     if (filePath.match(/^[a-zA-Z]:\\/)) {
       // C:\ like url.
-      filePath = "file:///" + filePath;
+      filePath = 'file:///' + filePath;
     }
-    if (filePath.startsWith("file:///")) {
-      return child_process.execFile("explorer.exe", [filePath]);
+    if (filePath.startsWith('file:///')) {
+      return child_process.execFile('explorer.exe', [filePath]);
     } else {
       return child_process.exec(`start ${filePath}`);
     }
-  } else if (process.platform === "darwin") {
-    child_process.execFile("open", [filePath]);
+  } else if (process.platform === 'darwin') {
+    child_process.execFile('open', [filePath]);
   } else {
-    child_process.execFile("xdg-open", [filePath]);
+    child_process.execFile('xdg-open', [filePath]);
   }
 }
 
 /**
- * get the directory path of this extension.
+ * Do nothing and sleep for `ms` milliseconds
+ * @param ms
  */
-export const extensionDirectoryPath = path.resolve(__dirname, "../../");
-
-/**
- * compile ~/.mumi/style.less and return 'css' content.
- */
-export async function getGlobalStyles(configPath): Promise<string> {
-  const globalLessFilePath = configPath
-    ? path.resolve(configPath, "./style.less")
-    : path.resolve(getConfigPath(), "./style.less");
-
-  let fileContent: string;
-  try {
-    fileContent = await readFile(globalLessFilePath, { encoding: "utf-8" });
-  } catch (e) {
-    // create style.less file
-    fileContent = `
-/* Please visit the URL below for more information: */
-/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
-
-.markdown-preview.markdown-preview {
-  // modify your style here
-  // eg: background-color: blue;
-}
-`;
-    await writeFile(globalLessFilePath, fileContent, { encoding: "utf-8" });
-  }
-
-  return await new Promise<string>((resolve, reject) => {
-    less.render(
-      fileContent,
-      { paths: [path.dirname(globalLessFilePath)] },
-      (error, output) => {
-        if (error) {
-          return resolve(`html body:before {
-  content: "Failed to compile \`style.less\`. ${error}" !important;
-  padding: 2em !important;
-}
-.mume.mume { display: none !important; }`);
-        } else {
-          return resolve(output.css || "");
-        }
-      },
-    );
+export function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      return resolve();
+    }, ms);
   });
 }
 
-/**
- * Get default config path
- * @
- */
-export function getConfigPath() {
-  const oldDefault = path.resolve(os.homedir(), "./.mume");
-
-  // For compatibility, use the old directory if either it exists
-  // or the user is on windows
-  if (fs.existsSync(oldDefault) || process.platform === "win32") {
-    return oldDefault;
-  } else {
-    // Calculate new default
-    if (
-      typeof process.env.XDG_CONFIG_HOME === "string" &&
-      process.env.XDG_CONFIG_HOME !== ""
-    ) {
-      return path.resolve(process.env.XDG_CONFIG_HOME, "./mume");
-    } else {
-      return path.resolve(os.homedir(), "./.local/state/mume");
-    }
+export function parseYAML(yaml: string = ''): JsonObject {
+  if (yaml.startsWith('---')) {
+    yaml = yaml
+      .trim()
+      .replace(/^---\r?\n/, '')
+      .replace(/\r?\n---$/, '');
+  }
+  try {
+    return YAML.parse(yaml);
+  } catch (error) {
+    return {
+      error: error.toString(),
+    };
   }
 }
 
 /**
- * load ~/.config/mume/mermaid_config.js file.
+ * NOTE: The __dirname is actually the ./out/(esm|cjs) directory
+ * Get the `./out` directory.
  */
-export async function getMermaidConfig(configPath): Promise<string> {
-  const mermaidConfigPath = configPath
-    ? path.resolve(configPath, "./mermaid_config.js")
-    : path.resolve(getConfigPath(), "./mermaid_config.js");
-
-  let mermaidConfig: string;
-  if (fs.existsSync(mermaidConfigPath)) {
-    try {
-      mermaidConfig = await readFile(mermaidConfigPath, { encoding: "utf-8" });
-    } catch (e) {
-      mermaidConfig = `MERMAID_CONFIG = {startOnLoad: false}`;
-    }
+let crossnoteBuildDirectory_: string = (() => {
+  if (typeof __dirname !== 'undefined') {
+    return path.resolve(__dirname, '../');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+  } else if (import.meta.url) {
+    // esm
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    return path.resolve(__dirname, '../');
   } else {
-    const fileContent = `// config mermaid init call
-// http://knsv.github.io/mermaid/#configuration
-//
-// You can edit the 'MERMAID_CONFIG' variable below.
-MERMAID_CONFIG = {
-  startOnLoad: false
-}
-`;
-    await writeFile(mermaidConfigPath, fileContent, { encoding: "utf-8" });
-    mermaidConfig = `MERMAID_CONFIG = {startOnLoad: false}`;
+    return '';
   }
+})();
 
-  return mermaidConfig;
-}
-
-export const defaultMathjaxConfig = {
-  "extensions": ["tex2jax.js"],
-  "jax": ["input/TeX", "output/HTML-CSS"],
-  "messageStyle": "none",
-  "tex2jax": {
-    processEnvironments: false,
-    processEscapes: true,
-  },
-  "TeX": {
-    extensions: [
-      "AMSmath.js",
-      "AMSsymbols.js",
-      "noErrors.js",
-      "noUndefined.js",
-    ],
-  },
-  "HTML-CSS": { availableFonts: ["TeX"] },
-};
-
-export const defaultKaTeXConfig = {
-  macros: {},
-};
-
-/**
- * load ~/.config/mume/mathjax_config.js file.
- */
-export async function getMathJaxConfig(configPath): Promise<object> {
-  const mathjaxConfigPath = configPath
-    ? path.resolve(configPath, "./mathjax_config.js")
-    : path.resolve(getConfigPath(), "./mathjax_config.js");
-
-  let mathjaxConfig: object;
-  if (fs.existsSync(mathjaxConfigPath)) {
-    try {
-      delete require.cache[mathjaxConfigPath]; // return uncached
-      mathjaxConfig = require(mathjaxConfigPath);
-    } catch (e) {
-      mathjaxConfig = defaultMathjaxConfig;
-    }
-  } else {
-    const fileContent = `
-module.exports = {
-  extensions: ['tex2jax.js'],
-  jax: ['input/TeX','output/HTML-CSS'],
-  messageStyle: 'none',
-  tex2jax: {
-    processEnvironments: false,
-    processEscapes: true
-  },
-  TeX: {
-    extensions: ['AMSmath.js', 'AMSsymbols.js', 'noErrors.js', 'noUndefined.js']
-  },
-  'HTML-CSS': { availableFonts: ['TeX'] }
-}
-`;
-    await writeFile(mathjaxConfigPath, fileContent, { encoding: "utf-8" });
-    mathjaxConfig = defaultMathjaxConfig;
-  }
-
-  return mathjaxConfig;
+export function setCrossnoteBuildDirectory(path: string) {
+  crossnoteBuildDirectory_ = path;
 }
 
 /**
- * load ~/.config/mume/katex_config.js file
+ * Get the directory path of this npm package with the following directory structure:
+ * You can use the `setCrossnoteBuildDirectory` function to set the directory path.
+ * ```
+ *  out
+ *  ├── cjs
+ *  ├── dependencies
+ *  ├── esm
+ *  ├── styles
+ *  ├── types
+ *  └── webview
+ * ```
+ * @returns
  */
-export async function getKaTeXConfig(configPath): Promise<object> {
-  const katexConfigPath = configPath
-    ? path.resolve(configPath, "./katex_config.js")
-    : path.resolve(getConfigPath(), "./katex_config.js");
-
-  let katexConfig: object;
-  if (fs.existsSync(katexConfigPath)) {
-    try {
-      delete require.cache[katexConfigPath]; // return uncached
-      katexConfig = require(katexConfigPath);
-    } catch (e) {
-      katexConfig = defaultKaTeXConfig;
-    }
-  } else {
-    const fileContent = `
-module.exports = {
-  macros: {}
-}`;
-    await writeFile(katexConfigPath, fileContent, { encoding: "utf-8" });
-    katexConfig = defaultKaTeXConfig;
-  }
-  return katexConfig;
+export function getCrossnoteBuildDirectory() {
+  return crossnoteBuildDirectory_;
 }
 
-export async function getExtensionConfig(configPath): Promise<object> {
-  const extensionConfigFilePath = configPath
-    ? path.resolve(configPath, "./config.json")
-    : path.resolve(getConfigPath(), "./config.json");
-
-  let config: object;
-  if (fs.existsSync(extensionConfigFilePath)) {
-    try {
-      delete require.cache[extensionConfigFilePath]; // return uncached
-      config = require(extensionConfigFilePath);
-    } catch (error) {
-      config = { error };
-    }
-  } else {
-    config = {};
-    await writeFile(extensionConfigFilePath, "{}", { encoding: "utf-8" });
-  }
-  return config;
-}
-
-export async function getParserConfig(configPath): Promise<ParserConfig> {
-  const parserConfigPath = configPath
-    ? path.resolve(configPath, "./parser.js")
-    : path.resolve(getConfigPath(), "./parser.js");
-
-  let parserConfig: ParserConfig;
-  if (fs.existsSync(parserConfigPath)) {
-    try {
-      delete require.cache[parserConfigPath]; // return uncached
-      parserConfig = require(parserConfigPath);
-    } catch (error) {
-      parserConfig = {};
-    }
-  } else {
-    const template = `module.exports = {
-  onWillParseMarkdown: function(markdown) {
-    return new Promise((resolve, reject)=> {
-      return resolve(markdown)
-    })
-  },
-  onDidParseMarkdown: function(html, {cheerio}) {
-    return new Promise((resolve, reject)=> {
-      return resolve(html)
-    })
-  },
-  onWillTransformMarkdown: function (markdown) {
-        return new Promise((resolve, reject) => {
-            return resolve(markdown);
-        });
-    },
-  onDidTransformMarkdown: function (markdown) {
-      return new Promise((resolve, reject) => {
-          return resolve(markdown);
-      });
-  }
-}`;
-    await writeFile(parserConfigPath, template, { encoding: "utf-8" });
-
-    parserConfig = {};
-  }
-
-  return parserConfig;
-}
-
-/**
- * Check whether two arrays are equal
- * @param x
- * @param y
- */
-export function isArrayEqual(x, y) {
-  if (x.length !== y.length) {
-    return false;
-  }
-  for (let i = 0; i < x.length; i++) {
-    if (x[i] !== y[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-let _externalAddFileProtocolFunction: (
-  filePath: string,
-  vscodePreviewPanel: vscode.WebviewPanel,
-) => string = null;
+let _externalAddFileProtocolFunction:
+  | ((filePath: string, vscodePreviewPanel: vscode.WebviewPanel) => string)
+  | null = null;
 
 export function useExternalAddFileProtocolFunction(
-  func: (filePath: string, vscodePreviewPanel: vscode.WebviewPanel) => string,
+  func: (
+    filePath: string,
+    vscodePreviewPanel?: vscode.WebviewPanel | null,
+  ) => string,
 ) {
   _externalAddFileProtocolFunction = func;
 }
@@ -467,15 +142,15 @@ export function useExternalAddFileProtocolFunction(
  */
 export function addFileProtocol(
   filePath: string,
-  vscodePreviewPanel?: vscode.WebviewPanel,
+  vscodePreviewPanel?: vscode.WebviewPanel | null,
 ): string {
-  if (_externalAddFileProtocolFunction) {
+  if (_externalAddFileProtocolFunction && vscodePreviewPanel) {
     return _externalAddFileProtocolFunction(filePath, vscodePreviewPanel);
   } else {
-    if (!filePath.startsWith("file://")) {
-      filePath = "file:///" + filePath;
+    if (!filePath.startsWith('file://')) {
+      filePath = 'file:///' + filePath;
     }
-    filePath = filePath.replace(/^file\:\/+/, "file:///");
+    filePath = filePath.replace(/^file:\/+/, 'file:///');
   }
   return filePath;
 }
@@ -488,101 +163,113 @@ export function removeFileProtocol(filePath: string): string {
   // See https://regex101.com/r/YlpEur/8/
   // - "file://///a///b//c/d"                   ---> "a///b//c/d"
   // - "vscode-resource://///file///a///b//c/d" ---> "file///a///b//c/d"
-  const regex = /^(?:(?:file|(vscode)-(?:webview-)?resource|vscode--resource):\/+)(.*)/m;
+  const regex =
+    /^(?:(?:file|(vscode)-(?:webview-)?resource|vscode--resource):\/+)(.*)/m;
 
   return filePath.replace(regex, (m, isVSCode, rest) => {
     if (isVSCode) {
       // For vscode urls -> Remove host: `file///C:/a/b/c` -> `C:/a/b/c`
-      rest = rest.replace(/^file\/+/, "");
+      rest = rest.replace(/^file\/+/, '');
     }
 
-    if (process.platform !== "win32" && !rest.startsWith("/")) {
+    if (process.platform !== 'win32' && !rest.startsWith('/')) {
       // On Linux platform, add a slash at the front
-      return "/" + rest;
+      return '/' + rest;
     } else {
       return rest;
     }
   });
 }
 
+export { uploadImage } from './tools/image-uploader';
+
 /**
- * style.less,
- * mathjax_config.js,
- * mermaid_config.js
- * config.json
- *
- * files
+ * Allow unsafed `eval` function
+ * Referred from:
+ *     https://github.com/atom/loophole/blob/master/src/loophole.coffee
+ * @param fn
  */
-// @ts-ignore
-export const configs: {
-  globalStyle: string;
-  mathjaxConfig: object;
-  katexConfig: object;
-  mermaidConfig: string;
-  parserConfig: ParserConfig;
-  /**
-   * Please note that this is not necessarily MarkdownEngineConfig
-   */
-  config: object;
-} = {
-  globalStyle: "",
-  mathjaxConfig: defaultMathjaxConfig,
-  katexConfig: defaultKaTeXConfig,
-  mermaidConfig: "MERMAID_CONFIG = {startOnLoad: false}",
-  parserConfig: {},
-  config: {},
-};
-
-export { uploadImage } from "./image-uploader";
-
-let originalEval = global.eval;
-let originalFunction = global.Function;
-let numberOfActiveOverrides = 0;
-
-export function allowUnsafe<T>(fn: () => T): T {
-  if (numberOfActiveOverrides === 0) {
-    originalEval = global.eval;
-    originalFunction = global.Function;
-  }
+export function allowUnsafeEval(fn) {
+  const previousEval = globalThis.eval;
   try {
-    numberOfActiveOverrides += 1;
-    global.eval = (source) => {
-      vm.runInThisContext(source);
-    };
+    globalThis.eval = (source) => vm.runInThisContext(source);
+
     return fn();
   } finally {
-    numberOfActiveOverrides -= 1;
-    if (numberOfActiveOverrides === 0) {
-      global.eval = originalEval;
-      global.Function = originalFunction;
-    }
+    globalThis.eval = previousEval;
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function allowUnsafeEvalAync(fn: () => Promise<any>) {
+  const previousEval = globalThis.eval;
+  try {
+    globalThis.eval = (source) => vm.runInThisContext(source);
+
+    return await fn();
+  } finally {
+    globalThis.eval = previousEval;
+  }
+}
+
+export function allowUnsafeNewFunction(fn) {
+  const previousFunction = globalThis.Function;
+  try {
+    globalThis.Function = Function as FunctionConstructor;
+    return fn();
+  } finally {
+    globalThis.Function = previousFunction;
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function allowUnsafeNewFunctionAsync(fn: () => Promise<any>) {
+  const previousFunction = globalThis.Function;
+  try {
+    globalThis.Function = Function as FunctionConstructor;
+    return await fn();
+  } finally {
+    globalThis.Function = previousFunction;
+  }
+}
+
+export async function allowUnsafeEvalAndUnsafeNewFunctionAsync(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fn: () => Promise<any>,
+) {
+  const previousFunction = globalThis.Function;
+  const previousEval = globalThis.eval;
+  try {
+    globalThis.Function = Function as FunctionConstructor;
+    globalThis.eval = (source) => vm.runInThisContext(source);
+    return await fn();
+  } finally {
+    globalThis.eval = previousEval;
+    globalThis.Function = previousFunction;
   }
 }
 
 export const loadDependency = (dependencyPath: string) =>
-  allowUnsafe(() => {
-    // Unsetting global.module prevents libraries like vega-lite from calling require(), which does not work
-    const prevModule = global.module;
-    global.module = undefined;
-
-    const result = require(path.resolve(
-      extensionDirectoryPath,
-      "dependencies",
-      dependencyPath,
-    ));
-
-    global.module = prevModule;
-    return result;
-  });
+  allowUnsafeEval(() =>
+    allowUnsafeNewFunction(() =>
+      require(
+        path.resolve(
+          getCrossnoteBuildDirectory(),
+          'dependencies',
+          dependencyPath,
+        ),
+      ),
+    ),
+  );
 
 export const extractCommandFromBlockInfo = (info: BlockInfo) =>
-  info.attributes["cmd"] === true ? info.language : info.attributes["cmd"];
+  info.attributes['cmd'] === true ? info.language : info.attributes['cmd'];
 
 export function Function(...args: string[]) {
-  let body = "";
+  let body = '';
   const paramLists: string[] = [];
   if (args.length) {
-    body = arguments[args.length - 1];
+    body = args[args.length - 1];
     for (let i = 0; i < args.length - 1; i++) {
       paramLists.push(args[i]);
     }
@@ -590,31 +277,107 @@ export function Function(...args: string[]) {
 
   const params = [];
   for (let j = 0, len = paramLists.length; j < len; j++) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let paramList: any = paramLists[j];
-    if (typeof paramList === "string") {
+    if (typeof paramList === 'string') {
       paramList = paramList.split(/\s*,\s*/);
     }
+    // eslint-disable-next-line prefer-spread
     params.push.apply(params, paramList);
   }
 
   return vm.runInThisContext(`
-    (function(${params.join(", ")}) {
+    (function(${params.join(', ')}) {
       ${body}
     })
   `);
 }
-Function.prototype = global.Function.prototype;
+Function.prototype = globalThis.Function.prototype;
 
-export const resolveBuildPathForWebview = (
-  libraryName: string,
-  buildPathForWebView: string,
-) => {
-  const buildPathForNode = require.resolve(libraryName).replace(/\\/g, "/");
-  const indexOfLibraryName = buildPathForNode.indexOf(libraryName + "/");
-  const libraryPath = buildPathForNode.substring(
-    0,
-    indexOfLibraryName + libraryName.length,
-  );
+export function isVSCodeWebExtension() {
+  return process.env.IS_VSCODE_WEB_EXTENSION === 'true';
+}
 
-  return path.resolve(libraryPath, buildPathForWebView);
-};
+/**
+ * This function is used to evaluate the config.js and parser.js
+ * @param code
+ */
+export function interpretJS(code: string) {
+  code = code.trim().replace(/[;,]+$/, '');
+  if (isVSCodeWebExtension()) {
+    const interpreter = new Sval({
+      sandBox: true,
+      ecmaVer: 2019,
+    });
+    interpreter.run(`exports.result = (${code})`);
+    return interpreter.exports.result;
+  } else {
+    const context = {};
+    vm.runInNewContext(`result = (${code})`, context);
+    return context['result'];
+  }
+}
+
+export function findClosingTagIndex(
+  inputString: string,
+  tagName: string,
+  startIndex = 0,
+) {
+  const openTag = `<${tagName}`;
+  const closeTag = `</${tagName}>`;
+  const stack: number[] = [];
+  let inComment = false;
+
+  // Start searching from the specified startIndex
+  for (let i = startIndex; i < inputString.length; i++) {
+    // Check for the start of a comment
+    if (inputString.substring(i, i + 4) === '<!--') {
+      inComment = true;
+      i += 3; // Skip the comment start
+    }
+
+    // Check for the end of a comment
+    if (inComment && inputString.substring(i, i + 3) === '-->') {
+      inComment = false;
+      i += 2; // Skip the comment end
+    }
+
+    // Skip characters inside comments
+    if (inComment) continue;
+
+    // Check for the opening tag
+    if (inputString.substring(i, i + openTag.length) === openTag) {
+      stack.push(i);
+    }
+
+    // Check for the closing tag
+    if (inputString.substring(i, i + closeTag.length) === closeTag) {
+      if (stack.length === 0) {
+        // No matching opening tag found, return -1
+        return -1;
+      } else {
+        stack.pop(); // Remove the corresponding opening tag
+        if (stack.length === 0) {
+          // If the stack is empty, the closing tag is found
+          return i;
+        }
+      }
+    }
+  }
+
+  // If we reach here, no closing tag was found, return -1
+  return -1;
+}
+
+export function replaceVariablesInString(
+  inputString: string,
+  replacements: { [key: string]: string } = {},
+) {
+  return inputString.replace(/\${([^}]+)}/g, (match, token) => {
+    if (token.startsWith('env:')) {
+      return process.env[token.replace(/^env:/, '').trim()] ?? '';
+    } else {
+      return replacements[token] ?? match;
+    }
+  });
+}

@@ -1,22 +1,21 @@
 // tslint:disable-next-line no-implicit-dependencies
-import { MarkdownIt } from "markdown-it";
-import { MarkdownEngineConfig } from "../markdown-engine-config";
-import parseMath from "../parse-math";
+import MarkdownIt from 'markdown-it';
+import { Notebook } from '../notebook';
+import parseMath from '../renderers/parse-math';
 
-export default (md: MarkdownIt, config: MarkdownEngineConfig) => {
-  // @ts-ignore
-  md.inline.ruler.before("escape", "math", (state, silent) => {
-    if (config.mathRenderingOption === "None") {
+export default (md: MarkdownIt, notebook: Notebook) => {
+  md.inline.ruler.before('escape', 'math', (state, silent) => {
+    if (notebook.config.mathRenderingOption === 'None') {
       return false;
     }
 
-    let openTag = null;
-    let closeTag = null;
+    let openTag: string | null = null;
+    let closeTag: string | null = null;
     let displayMode = true;
     const {
       mathBlockDelimiters: blockDelimiters,
       mathInlineDelimiters: inlineDelimiters,
-    } = config;
+    } = notebook.config;
 
     for (const tagPair of blockDelimiters) {
       if (state.src.startsWith(tagPair[0], state.pos)) {
@@ -35,19 +34,19 @@ export default (md: MarkdownIt, config: MarkdownEngineConfig) => {
       }
     }
 
-    if (!openTag) {
+    if (!openTag || !closeTag) {
       return false; // not math
     }
 
-    let content = null;
+    let content: string | null = null;
     let end = -1;
 
     let i = state.pos + openTag.length;
     while (i < state.src.length) {
-      if (state.src.startsWith(closeTag, i)) {
+      if (closeTag && state.src.startsWith(closeTag, i)) {
         end = i;
         break;
-      } else if (state.src[i] === "\\") {
+      } else if (state.src[i] === '\\') {
         i += 1;
       }
       i += 1;
@@ -60,11 +59,12 @@ export default (md: MarkdownIt, config: MarkdownEngineConfig) => {
     }
 
     if (content && !silent) {
-      const token = state.push("math");
+      const token = state.push('math', '', 0);
       token.content = content.trim();
-      token.openTag = openTag;
-      token.closeTag = closeTag;
-      token.displayMode = displayMode;
+      token.meta = token.meta || {};
+      token.meta.openTag = openTag;
+      token.meta.closeTag = closeTag;
+      token.meta.displayMode = displayMode;
 
       state.pos += content.length + openTag.length + closeTag.length;
       return true;
@@ -74,13 +74,14 @@ export default (md: MarkdownIt, config: MarkdownEngineConfig) => {
   });
 
   md.renderer.rules.math = (tokens, idx) => {
-    const content: string = tokens[idx] ? tokens[idx].content : null;
+    const content: string = tokens[idx].content ?? '';
     return parseMath({
       content,
-      openTag: (tokens[idx] as any).openTag,
-      closeTag: (tokens[idx] as any).closeTag,
-      renderingOption: config.mathRenderingOption,
-      displayMode: (tokens[idx] as any).displayMode,
+      openTag: tokens[idx].meta.openTag,
+      closeTag: tokens[idx].meta.closeTag,
+      renderingOption: notebook.config.mathRenderingOption,
+      displayMode: tokens[idx].meta.displayMode,
+      katexConfig: notebook.config.katexConfig,
     });
   };
 };
