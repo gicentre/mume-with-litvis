@@ -1,7 +1,6 @@
-import { readFile } from "fs";
-import { extname } from "path";
-import { MarkdownEngineConfig } from "../mume";
-import { removeFileProtocol } from "../utility";
+import { extname } from 'path';
+import { Notebook } from '../notebook';
+import { removeFileProtocol } from '../utility';
 
 /**
  * Load local svg files and embed them into html directly.
@@ -9,35 +8,36 @@ import { removeFileProtocol } from "../utility";
  */
 export default async function enhance(
   $: CheerioStatic,
-  options: MarkdownEngineConfig,
+  notebook: Notebook,
   resolveFilePath: (path: string, useRelativeFilePath: boolean) => string,
 ): Promise<void> {
-  const asyncFunctions = [];
-  $("img").each((i, img) => {
+  const asyncFunctions: Promise<string | null>[] = [];
+  $('img').each((i, img) => {
     const $img = $(img);
-    let src = resolveFilePath($img.attr("src"), false);
+    let src = resolveFilePath($img.attr('src'), false);
 
-    const fileProtocolMatch = src.match(/^(file|vscode\-resource):\/\/+/);
+    const fileProtocolMatch = src.match(/^(file|vscode-resource):\/\/+/);
     if (fileProtocolMatch) {
       src = removeFileProtocol(src);
-      src = src.replace(/\?(\.|\d)+$/, ""); // remove cache
+      src = src.replace(/\?(\.|\d)+$/, ''); // remove cache
       const imageType = extname(src).slice(1);
-      if (imageType !== "svg") {
+      if (imageType !== 'svg') {
         return;
       }
       asyncFunctions.push(
-        new Promise((resolve, reject) => {
-          readFile(decodeURI(src), (error, data) => {
-            if (error) {
+        new Promise((resolve) => {
+          notebook.fs
+            .readFile(decodeURI(src), 'base64')
+            .then((base64) => {
+              $img.attr(
+                'src',
+                `data:image/svg+xml;charset=utf-8;base64,${base64}`,
+              );
+              return resolve(base64);
+            })
+            .catch(() => {
               return resolve(null);
-            }
-            const base64 = new Buffer(data).toString("base64");
-            $img.attr(
-              "src",
-              `data:image/svg+xml;charset=utf-8;base64,${base64}`,
-            );
-            return resolve(base64);
-          });
+            });
         }),
       );
     }

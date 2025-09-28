@@ -3,27 +3,25 @@
  * [[...]]
  */
 
-// tslint:disable-next-line no-implicit-dependencies
-import { MarkdownIt } from "markdown-it";
-import { MarkdownEngineConfig } from "../markdown-engine-config";
+import MarkdownIt from 'markdown-it';
+import { Notebook } from '../notebook';
 
-export default (md: MarkdownIt, config: MarkdownEngineConfig) => {
-  // @ts-ignore
-  md.inline.ruler.before("autolink", "wikilink", (state, silent) => {
+export default (md: MarkdownIt, notebook: Notebook) => {
+  md.inline.ruler.before('autolink', 'wikilink', (state, silent) => {
     if (
-      !config.enableWikiLinkSyntax ||
-      !state.src.startsWith("[[", state.pos)
+      !notebook.config.enableWikiLinkSyntax ||
+      !state.src.startsWith('[[', state.pos)
     ) {
       return false;
     }
 
-    let content = null;
-    const tag = "]]";
+    let content: string | null = null;
+    const tag = ']]';
     let end = -1;
 
     let i = state.pos + tag.length;
     while (i < state.src.length) {
-      if (state.src[i] === "\\") {
+      if (state.src[i] === '\\') {
         i += 1;
       } else if (state.src.startsWith(tag, i)) {
         end = i;
@@ -40,7 +38,7 @@ export default (md: MarkdownIt, config: MarkdownEngineConfig) => {
     }
 
     if (content && !silent) {
-      const token = state.push("wikilink");
+      const token = state.push('wikilink', 'a', 0);
       token.content = content;
 
       state.pos += content.length + 2 * tag.length;
@@ -53,26 +51,11 @@ export default (md: MarkdownIt, config: MarkdownEngineConfig) => {
   md.renderer.rules.wikilink = (tokens, idx) => {
     const { content } = tokens[idx];
     if (!content) {
-      return;
+      return '';
     }
 
-    const splits = content.split("|");
-    let wikiLink: string;
-    let linkText: string;
-    if (splits.length === 1) {
-      linkText = splits[0].trim();
-      const filename = linkText.replace(/\s/g, "_");
-      wikiLink = `${filename}${config.wikiLinkFileExtension}`;
-    } else {
-      if (config.useGitHubStylePipedLink) {
-        linkText = splits[0].trim();
-        wikiLink = `${splits[1].trim()}${config.wikiLinkFileExtension}`;
-      } else {
-        linkText = splits[1].trim();
-        wikiLink = `${splits[0].trim()}${config.wikiLinkFileExtension}`;
-      }
-    }
+    const { text, link } = notebook.processWikilink(content);
 
-    return `<a href="${wikiLink}">${linkText}</a>`;
+    return `<a href="${link}">${text}</a>`;
   };
 };
