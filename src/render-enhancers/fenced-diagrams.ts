@@ -2,11 +2,8 @@
 import fetch from 'cross-fetch';
 import { escape } from 'html-escaper';
 import * as YAML from 'yaml';
-import {
-  BlockAttributes,
-  stringifyBlockAttributes,
-} from '../lib/block-attributes';
-import { BlockInfo } from '../lib/block-info';
+import { BlockAttributes, stringifyBlockAttributes } from 'block-attributes';
+import { BlockInfo } from 'block-info';
 import computeChecksum from '../lib/compute-checksum';
 import { renderBitfield } from '../renderers/bitfield';
 import { render as renderPlantuml } from '../renderers/puml';

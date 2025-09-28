@@ -1,20 +1,17 @@
 {
-  "name": "crossnote",
-  "version": "0.9.15",
-  "description": "A powerful markdown notebook tool",
+  "name": "crossnote-with-litvis",
+  "version": "0.34.0",
+  "description": "Fork of crossnote with added http://litvis.org/",
   "keywords": [
     "markdown"
   ],
-  "repository": "https://github.com/shd101wyy/crossnote",
-  "license": "NCSA",
+  "repository": "https://github.com/gicentre/crossnote-with-litvis",
+  "license": "BSD-3, NCSA",
   "contributors": [
     "shd101wyy",
     "kachkaev",
     "gabyx"
   ],
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "exports": {
     ".": {
       "types": "./out/types/src/index.d.ts",
@@ -63,8 +60,11 @@
     "@sanity/diff-match-patch": "^3.1.1",
     "@ungap/structured-clone": "^1.2.0",
     "@viz-js/viz": "^3.1.0",
+    "apache-arrow": "^4.0.0",
     "async-mutex": "^0.4.0",
     "bit-field": "^1.9.0",
+    "block-attributes": "^0.4.0",
+    "block-info": "^0.4.0",
     "case-anything": "^2.1.13",
     "cheerio": "^1.0.0-rc.12",
     "chrome-paths": "^1.0.1",
@@ -83,6 +83,7 @@
     "jquery": "^3.7.1",
     "katex": "^0.16.22",
     "less": "^4.2.0",
+    "litvis-integration-mume": "0.10.0",
     "markdown-it": "^13.0.1",
     "markdown-it-abbr": "^1.0.4",
     "markdown-it-deflist": "^2.1.0",
@@ -114,11 +115,16 @@
     "slash": "^5.1.0",
     "sval": "^0.4.8",
     "temp": "^0.9.4",
+    "to-vfile": "^6.1.0",
     "twemoji": "^13.1.0",
     "type-fest": "^4.3.1",
     "unstated-next": "^1.1.0",
     "uslug": "^1.0.4",
-    "vega-loader": "^4.5.1",
+    "vega-embed": "^6.29.0",
+    "vega-lite": "^5.23.0",
+    "vega-loader": "^5.33.0",
+    "vega-loader-arrow": "^0.3.2",
+    "vfile": "^4.2.1",
     "vscode-uri": "^3.0.7",
     "yaml": "^2.3.2"
   },
@@ -148,7 +154,6 @@
     "@types/react-dom": "^18.2.7",
     "@types/temp": "^0.9.4",
     "@types/uslug": "^1.0.2",
-    "@types/vfile": "^3.0.2",
     "@types/vscode": "1.80.0",
     "@types/vscode-webview": "^1.57.2",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
@@ -174,5 +179,8 @@
     "ts-jest": "^29.1.1",
     "typedoc": "^0.25.1",
     "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

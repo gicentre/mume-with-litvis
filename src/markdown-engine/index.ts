@@ -5,6 +5,12 @@ import { execFile } from 'child_process';
 import { copy } from 'copy-anything';
 import CryptoJS from 'crypto-js';
 import * as fs from 'fs';
+import {
+  enhanceWithLitvis,
+  initLitvisEnhancerCache,
+  LitvisEnhancerCache,
+  postEnhanceWithLitvis,
+} from 'litvis-integration-mume';
 import { escape } from 'html-escaper';
 import * as path from 'path';
 import request from 'request';
@@ -17,10 +23,10 @@ import { ebookConvert } from '../converters/ebook-convert';
 import { markdownConvert } from '../converters/markdown-convert';
 import { pandocConvert } from '../converters/pandoc-convert';
 import { princeConvert } from '../converters/prince-convert';
-import { parseBlockAttributes } from '../lib/block-attributes/parseBlockAttributes';
-import { stringifyBlockAttributes } from '../lib/block-attributes/stringifyBlockAttributes';
-import { normalizeBlockInfo } from '../lib/block-info/normalize-block-info';
-import { parseBlockInfo } from '../lib/block-info/parse-block-info';
+import { parseBlockAttributes } from 'block-attributes';
+import { stringifyBlockAttributes } from 'block-attributes';
+import { normalizeBlockInfo } from 'block-info';
+import { parseBlockInfo } from 'block-info';
 import {
   FileSystemApi,
   Notebook,
@@ -105,18 +111,31 @@ export interface HTMLTemplateOption {
 }
 
 // NOTE: The order of the following matters.
-const dependentLibraryMaterials = [
+const dependentLibraryConfigs = [
   {
-    key: 'vega',
-    version: '5.25.0',
+    libraryName: 'vega',
+    libraryVersion: '5',
+    buildPathForWebview: 'build/vega.min.js',
   },
   {
-    key: 'vega-lite',
-    version: '5.16.1',
+    libraryName: 'vega-lite',
+    libraryVersion: '5',
+    buildPathForWebview: 'build/vega-lite.min.js',
   },
   {
-    key: 'vega-embed',
-    version: '6.23.0',
+    libraryName: 'vega-embed',
+    libraryVersion: '6',
+    buildPathForWebview: 'build/vega-embed.min.js',
+  },
+  {
+    libraryName: 'apache-arrow',
+    libraryVersion: '4',
+    buildPathForWebview: 'Arrow.es2015.min.js',
+  },
+  {
+    libraryName: 'vega-loader-arrow',
+    libraryVersion: '0.0',
+    buildPathForWebview: 'build/vega-loader-arrow.min.js',
   },
 ];
 
@@ -143,6 +162,8 @@ export class MarkdownEngine {
 
   // caches
   private graphsCache: { [key: string]: string } = {};
+
+  private litvisEnhancerCache: LitvisEnhancerCache;
 
   // code chunks
   private codeChunksData: { [key: string]: CodeChunkData } = {};
@@ -342,11 +363,10 @@ if (typeof(window['Reveal']) !== 'undefined') {
     }
 
     // vega
-    dependentLibraryMaterials.forEach(({ key }) => {
+    dependentLibraryConfigs.forEach(({ libraryName, buildPathForWebview }) => {
       scripts += `<script src="${utility.addFileProtocol(
         path.resolve(
-          utility.getCrossnoteBuildDirectory(),
-          `./dependencies/${key}/${key}.min.js`,
+          utility.resolveBuildPathForWebview(libraryName, buildPathForWebview),
         ),
         vscodePreviewPanel,
       )}" charset="UTF-8"></script>`;
@@ -892,14 +912,16 @@ if (typeof(window['Reveal']) !== 'undefined') {
       html.indexOf(' class="vega') >= 0 ||
       html.indexOf(' class="vega-lite') >= 0
     ) {
-      dependentLibraryMaterials.forEach(({ key, version }) => {
-        vegaScript += options.offline
-          ? `<script type="text/javascript" src="file:///${path.resolve(
-              utility.getCrossnoteBuildDirectory(),
-              `./dependencies/${key}/${key}.min.js`,
-            )}" charset="UTF-8"></script>`
-          : `<script type="text/javascript" src="https://${this.notebook.config.jsdelivrCdnHost}/npm/${key}@${version}/build/${key}.js"></script>`;
-      });
+      dependentLibraryConfigs.forEach(
+        ({ libraryName, libraryVersion, buildPathForWebview }) => {
+          vegaScript += options.offline
+            ? `<script type="text/javascript" src="file:///${utility.resolveBuildPathForWebview(
+                libraryName,
+                buildPathForWebview,
+              )}" charset="UTF-8"></script>`
+            : `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/${libraryName}@${libraryVersion}/${buildPathForWebview}"></script>`;
+        },
+      );
 
       vegaInitScript += `<script>
       var vegaEls = document.querySelectorAll('.vega, .vega-lite');
@@ -2139,12 +2161,15 @@ sidebarTOCBtn.addEventListener('click', function(event) {
   */
 
   /**
-   * clearCaches will clear filesCache, codeChunksData, graphsCache
+   * clearCaches will clear filesCache, codeChunksData, graphsCache and litvis
    */
-  public clearCaches() {
+  public async clearCaches() {
     this.filesCache = {};
     this.codeChunksData = {};
     this.graphsCache = {};
+    this.litvisEnhancerCache = await initLitvisEnhancerCache({
+      mumeWorkingDirectory: this.projectDirectoryPath.fsPath,
+    });
   }
 
   private frontMatterToTable(arg) {
@@ -2589,6 +2614,12 @@ sidebarTOCBtn.addEventListener('click', function(event) {
       this.notebook.config.mathBlockDelimiters,
       this.notebook.config.katexConfig,
     );
+    await enhanceWithLitvis(
+      processedNarrative,
+      $,
+      this.litvisEnhancerCache,
+      this.parseMD.bind(this),
+    );
     await enhanceWithFencedDiagrams({
       $,
       graphsCache: this.graphsCache,
@@ -2626,11 +2657,15 @@ sidebarTOCBtn.addEventListener('click', function(event) {
 
     html =
       frontMatterTable +
+      $('head').html() +
       // NOTE: '\n' is necessary here. Otherwise, it might generate html like '</table><p data-source-line="12">[CROSSNOTESLIDE]</p>'
       // and we will fail to parse for slides, which splits by `^<p...>[CROSSNOTESLIDE]</p>`.
       '\n' +
-      $('head').html() +
-      $('body').html(); // cheerio $.html() will add <html><head></head><body>$html</body></html>, so we hack it by select body first.
+      postEnhanceWithLitvis(
+        processedNarrative,
+        $('body').html(), // cheerio $.html() will add <html><head></head><body>$html</body></html>, so we hack it by select body first.
+        MarkdownEngine.updateLintingReport as any,
+      );
 
     /**
      * check slides

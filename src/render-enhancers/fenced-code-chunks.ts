@@ -1,7 +1,7 @@
 import { escape } from 'html-escaper';
 import { run } from '../code-chunk/code-chunk';
 import { CodeChunkData, CodeChunksData } from '../code-chunk/code-chunk-data';
-import { BlockInfo } from '../lib/block-info';
+import { BlockInfo } from 'block-info';
 import {
   MarkdownEngineOutput,
   MarkdownEngineRenderOption,

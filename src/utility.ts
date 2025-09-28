@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 import * as vm from 'vm';
 import * as vscode from 'vscode';
 import * as YAML from 'yaml';
-import { BlockInfo } from './lib/block-info';
+import { BlockInfo } from 'block-info';
 
 // Polyfill structuredClone if it's not supported
 if (!('structuredClone' in globalThis)) {
@@ -183,84 +183,45 @@ export function removeFileProtocol(filePath: string): string {
 
 export { uploadImage } from './tools/image-uploader';
 
-/**
- * Allow unsafed `eval` function
- * Referred from:
- *     https://github.com/atom/loophole/blob/master/src/loophole.coffee
- * @param fn
- */
-export function allowUnsafeEval(fn) {
-  const previousEval = globalThis.eval;
-  try {
-    globalThis.eval = (source) => vm.runInThisContext(source);
+let originalEval = global.eval;
+let originalFunction = global.Function;
+let numberOfActiveOverrides = 0;
 
+export function allowUnsafe<T>(fn: () => T): T {
+  if (numberOfActiveOverrides === 0) {
+    originalEval = global.eval;
+    originalFunction = global.Function;
+  }
+
+  try {
+    numberOfActiveOverrides += 1;
+
+    global.eval = (source) => {
+      vm.runInThisContext(source);
+    };
     return fn();
   } finally {
-    globalThis.eval = previousEval;
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function allowUnsafeEvalAync(fn: () => Promise<any>) {
-  const previousEval = globalThis.eval;
-  try {
-    globalThis.eval = (source) => vm.runInThisContext(source);
-
-    return await fn();
-  } finally {
-    globalThis.eval = previousEval;
-  }
-}
-
-export function allowUnsafeNewFunction(fn) {
-  const previousFunction = globalThis.Function;
-  try {
-    globalThis.Function = Function as FunctionConstructor;
-    return fn();
-  } finally {
-    globalThis.Function = previousFunction;
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function allowUnsafeNewFunctionAsync(fn: () => Promise<any>) {
-  const previousFunction = globalThis.Function;
-  try {
-    globalThis.Function = Function as FunctionConstructor;
-    return await fn();
-  } finally {
-    globalThis.Function = previousFunction;
-  }
-}
-
-export async function allowUnsafeEvalAndUnsafeNewFunctionAsync(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fn: () => Promise<any>,
-) {
-  const previousFunction = globalThis.Function;
-  const previousEval = globalThis.eval;
-  try {
-    globalThis.Function = Function as FunctionConstructor;
-    globalThis.eval = (source) => vm.runInThisContext(source);
-    return await fn();
-  } finally {
-    globalThis.eval = previousEval;
-    globalThis.Function = previousFunction;
+    numberOfActiveOverrides -= 1;
+    if (numberOfActiveOverrides === 0) {
+      global.eval = originalEval;
+      global.Function = originalFunction;
+    }
   }
 }
 
 export const loadDependency = (dependencyPath: string) =>
-  allowUnsafeEval(() =>
-    allowUnsafeNewFunction(() =>
-      require(
-        path.resolve(
-          getCrossnoteBuildDirectory(),
-          'dependencies',
-          dependencyPath,
-        ),
-      ),
-    ),
-  );
+  allowUnsafe(() => {
+    // Unsetting global.module prevents libraries like vega-lite from calling require(), which does not work
+    const prevModule = global.module;
+    global.module = undefined;
+
+    const result = require(
+      path.resolve(extensionDirectoryPath, 'dependencies', dependencyPath),
+    );
+
+    global.module = prevModule;
+    return result;
+  });
 
 export const extractCommandFromBlockInfo = (info: BlockInfo) =>
   info.attributes['cmd'] === true ? info.language : info.attributes['cmd'];
@@ -380,4 +341,18 @@ export function replaceVariablesInString(
       return replacements[token] ?? match;
     }
   });
+}
+
+export function resolveBuildPathForWebview(
+  libraryName: string,
+  buildPathForWebView: string,
+) {
+  const buildPathForNode = require.resolve(libraryName).replace(/\\/g, '/');
+  const indexOfLibraryName = buildPathForNode.indexOf(libraryName + '/');
+  const libraryPath = buildPathForNode.substring(
+    0,
+    indexOfLibraryName + libraryName.length,
+  );
+
+  return path.resolve(libraryPath, buildPathForWebView);
 }

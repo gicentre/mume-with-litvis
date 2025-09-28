@@ -1,6 +1,6 @@
 import MarkdownIt from 'markdown-it';
 import Token from 'markdown-it/lib/token';
-import { parseBlockAttributes } from '../lib/block-attributes';
+import { parseBlockAttributes } from 'block-attributes';
 
 export default (md: MarkdownIt) => {
   // Follow the same attributes syntax as pandoc & rmarkdown:

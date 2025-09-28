@@ -1,7 +1,7 @@
 import { escape } from 'html-escaper';
 import { KatexOptions } from 'katex';
-import { stringifyBlockAttributes } from '../lib/block-attributes';
-import { BlockInfo } from '../lib/block-info';
+import { stringifyBlockAttributes } from 'block-attributes';
+import { BlockInfo } from 'block-info';
 import { MathRenderingOption } from '../notebook';
 import parseMath from '../renderers/parse-math';
 

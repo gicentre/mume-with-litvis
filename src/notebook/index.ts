@@ -36,6 +36,7 @@ import {
   NotebookConfig,
   getDefaultNotebookConfig,
 } from './types';
+import { useMarkdownItLitvisFeatures } from 'litvis-integration-mume';
 
 export * from './types';
 
@@ -79,6 +80,8 @@ interface RefreshNotesIfNotLoaded {
 interface RefreshNotesArgs extends RefreshNotesIfNotLoaded {
   refreshRelations?: boolean;
 }
+
+const UPDATE_LINTING_REPORT: (vFiles: VFile[]) => void = null;
 
 export class Notebook {
   public notebookPath: URI;
@@ -154,12 +157,15 @@ export class Notebook {
     useMarkdownItCurlyBracketAttributes(md);
     useMarkdownItCriticMarkup(md, this);
     useMarkdownItEmoji(md, this);
+    useMarkdownItLitvisFeatures(this.md, this.config);
     useMarkdownItHTML5Embed(md, this);
     useMarkdownItMath(md, this);
     useMarkdownItWikilink(md, this);
     useMarkdownAdmonition(md);
     useMarkdownItSourceMap(md);
     useMarkdownItWidget(md, this);
+
+    this.clearAllNoteMarkdownEngineCaches();
     return md;
   }
 
